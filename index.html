@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Verify — Investor Onboarding Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Mono:wght@300;400;500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #09090f;
+    --surface: #111118;
+    --surface2: #18181f;
+    --border: rgba(255,255,255,0.07);
+    --gold: #c9a96e;
+    --gold2: #e8c98a;
+    --ink: #e8e4d9;
+    --muted: rgba(232,228,217,0.45);
+    --blue: #4a8fd4;
+    --green: #4caf7d;
+    --red: #c0554a;
+    --amber: #d4944a;
+  }
+  html, body { height: 100%; background: var(--bg); color: var(--ink); font-family: 'Lato', sans-serif; }
+  #root { height: 100%; }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(201,169,110,0.3); border-radius: 2px; }
+  .mono { font-family: 'DM Mono', monospace; }
+  .serif { font-family: 'Playfair Display', serif; }
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px; height: 60px;
+    background: rgba(9,9,15,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--gold); letter-spacing: 0.05em; cursor: pointer; }
+  .nav-links { display: flex; gap: 8px; }
+  .nav-btn { background: none; border: none; color: var(--muted); font-family: 'Lato', sans-serif; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+  .nav-btn:hover, .nav-btn.active { color: var(--ink); background: rgba(255,255,255,0.06); }
+  .nav-btn.primary { background: var(--gold); color: #09090f; font-weight: 700; }
+  .nav-btn.primary:hover { background: var(--gold2); }
+  .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 120px 40px 80px; background: radial-gradient(ellipse 80% 60% at 50% 30%, rgba(201,169,110,0.06) 0%, transparent 70%); }
+  .hero-tag { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; margin-bottom: 24px; padding: 6px 16px; border: 1px solid rgba(201,169,110,0.25); border-radius: 100px; }
+  .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(42px, 6vw, 72px); font-weight: 700; text-align: center; line-height: 1.1; margin-bottom: 24px; }
+  .hero-title span { color: var(--gold); }
+  .hero-sub { font-size: 17px; color: var(--muted); text-align: center; max-width: 520px; line-height: 1.7; margin-bottom: 56px; }
+  .portal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; max-width: 960px; width: 100%; }
+  .portal-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px; cursor: pointer; transition: all 0.25s; position: relative; overflow: hidden; }
+  .portal-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--card-accent, var(--gold)); opacity: 0; transition: opacity 0.25s; }
+  .portal-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.12); }
+  .portal-card:hover::before { opacity: 1; }
+  .portal-icon { font-size: 28px; margin-bottom: 16px; }
+  .portal-title { font-family: 'Playfair Display', serif; font-size: 20px; margin-bottom: 8px; }
+  .portal-desc { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 20px; }
+  .portal-features { list-style: none; }
+  .portal-features li { font-size: 12px; color: var(--muted); padding: 4px 0; font-family: 'DM Mono', monospace; }
+  .portal-features li::before { content: '— '; color: var(--card-accent, var(--gold)); }
+  .portal-cta { margin-top: 24px; width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--card-accent, var(--gold)); background: transparent; color: var(--card-accent, var(--gold)); font-family: 'Lato', sans-serif; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+  .portal-cta:hover { background: var(--card-accent, var(--gold)); color: #09090f; font-weight: 700; }
+  .page { padding: 80px 40px 40px; max-width: 1200px; margin: 0 auto; }
+  .page-header { padding: 32px 0 28px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  .page-title { font-family: 'Playfair Display', serif; font-size: 32px; margin-bottom: 6px; }
+  .page-sub { font-size: 14px; color: var(--muted); }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+  .card + .card { margin-top: 16px; }
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; }
+  .kpi-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .kpi-value { font-family: 'DM Mono', monospace; font-size: 26px; font-weight: 500; }
+  .kpi-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 10px 16px; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); font-weight: 400; }
+  td { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-family: 'DM Mono', monospace; font-weight: 500; }
+  .badge-green { background: rgba(76,175,125,0.12); color: var(--green); border: 1px solid rgba(76,175,125,0.2); }
+  .badge-amber { background: rgba(212,148,74,0.12); color: var(--amber); border: 1px solid rgba(212,148,74,0.2); }
+  .badge-red { background: rgba(192,85,74,0.12); color: var(--red); border: 1px solid rgba(192,85,74,0.2); }
+  .badge-blue { background: rgba(74,143,212,0.12); color: var(--blue); border: 1px solid rgba(74,143,212,0.2); }
+  .badge-gold { background: rgba(201,169,110,0.12); color: var(--gold); border: 1px solid rgba(201,169,110,0.2); }
+  .form-group { margin-bottom: 20px; }
+  .form-label { display: block; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .form-input, .form-select { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; color: var(--ink); font-family: 'Lato', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; }
+  .form-input:focus, .form-select:focus { border-color: rgba(201,169,110,0.4); }
+  .form-select option { background: var(--surface2); }
+  .btn { padding: 12px 24px; border-radius: 8px; border: none; cursor: pointer; font-family: 'Lato', sans-serif; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 700; transition: all 0.2s; }
+  .btn-primary { background: var(--gold); color: #09090f; }
+  .btn-primary:hover { background: var(--gold2); }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--ink); }
+  .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-sm { padding: 8px 16px; font-size: 12px; }
+  .steps { display: flex; align-items: center; gap: 0; margin-bottom: 40px; }
+  .step { display: flex; align-items: center; gap: 10px; }
+  .step-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'DM Mono', monospace; font-size: 13px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); flex-shrink: 0; }
+  .step.active .step-num { background: var(--gold); color: #09090f; border-color: var(--gold); font-weight: 700; }
+  .step.done .step-num { background: var(--green); color: white; border-color: var(--green); }
+  .step-label { font-size: 13px; color: var(--muted); white-space: nowrap; }
+  .step.active .step-label { color: var(--ink); }
+  .step-line { flex: 1; height: 1px; background: var(--border); min-width: 20px; }
+  .upload-zone { border: 1px dashed rgba(201,169,110,0.3); border-radius: 10px; padding: 28px; text-align: center; cursor: pointer; transition: all 0.2s; background: rgba(201,169,110,0.02); }
+  .upload-zone:hover { border-color: var(--gold); background: rgba(201,169,110,0.05); }
+  .upload-icon { font-size: 28px; margin-bottom: 10px; opacity: 0.5; }
+  .upload-text { font-size: 13px; color: var(--muted); }
+  .upload-text strong { color: var(--gold); }
+  .doc-item { display: flex; align-items: center; gap: 16px; padding: 14px 16px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; background: var(--surface2); }
+  .doc-status { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+  .doc-status.uploaded { background: rgba(76,175,125,0.2); color: var(--green); }
+  .doc-status.pending { background: rgba(255,255,255,0.06); color: var(--muted); border: 1px solid var(--border); }
+  .doc-status.expiring { background: rgba(212,148,74,0.2); color: var(--amber); }
+  .doc-name { flex: 1; font-size: 14px; }
+  .doc-sub { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  @media (max-width: 768px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } .nav-links { display: none; } }
+  .sidebar-layout { display: grid; grid-template-columns: 280px 1fr; gap: 24px; }
+  @media (max-width: 900px) { .sidebar-layout { grid-template-columns: 1fr; } }
+  .timeline-item { display: flex; gap: 16px; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+  .timeline-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); flex-shrink: 0; margin-top: 6px; }
+  .timeline-content { flex: 1; }
+  .timeline-title { font-size: 13px; margin-bottom: 2px; }
+  .timeline-meta { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .alert { padding: 14px 18px; border-radius: 8px; margin-bottom: 12px; font-size: 13px; display: flex; align-items: center; gap: 12px; }
+  .alert-amber { background: rgba(212,148,74,0.1); border: 1px solid rgba(212,148,74,0.2); color: var(--amber); }
+  .alert-red { background: rgba(192,85,74,0.1); border: 1px solid rgba(192,85,74,0.2); color: var(--red); }
+  .alert-green { background: rgba(76,175,125,0.1); border: 1px solid rgba(76,175,125,0.2); color: var(--green); }
+  .section-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+  .case-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; cursor: pointer; transition: all 0.2s; display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: start; }
+  .case-card:hover { border-color: rgba(255,255,255,0.12); transform: translateX(3px); }
+  .filter-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+  .filter-btn { padding: 7px 14px; border-radius: 100px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 12px; cursor: pointer; font-family: 'Lato', sans-serif; transition: all 0.2s; }
+  .filter-btn:hover, .filter-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(201,169,110,0.08); }
+  .email-preview { background: #1a1a2e; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .email-header { background: #111118; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+  .email-subject { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .email-from { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .email-body { padding: 24px; font-size: 13px; line-height: 1.8; color: var(--muted); }
+  .email-body .highlight { color: var(--gold); }
+  .email-body .btn-email { display: inline-block; padding: 12px 24px; background: var(--gold); color: #09090f; border-radius: 6px; font-weight: 700; font-size: 13px; margin: 16px 0; text-decoration: none; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .fade-in { animation: fadeIn 0.35s ease forwards; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<script type="text/babel">
+const { useState } = React;
+
+const FUNDS = ["Apex Capital III", "Meridian Growth II", "Harborview PE V"];
+const ENTITIES = ["Individual", "Corporate Entity", "Trust", "Partnership", "Foundation"];
+const CASES = [
+  { id: "C-0041", investor: "Blackwood Family Office", fund: "Apex Capital III", status: "In Review", risk: "High", assignee: "SR", docs: 8, complete: 6, days: 3 },
+  { id: "C-0040", investor: "Vantage Pension Trust", fund: "Meridian Growth II", status: "Pending Docs", risk: "Medium", assignee: "MK", docs: 6, complete: 2, days: 7 },
+  { id: "C-0039", investor: "Al-Farooq Holdings Ltd", fund: "Apex Capital III", status: "Escalated", risk: "High", assignee: "SR", docs: 9, complete: 9, days: 12 },
+  { id: "C-0038", investor: "Nordic Endowment Fund", fund: "Harborview PE V", status: "Approved", risk: "Low", assignee: "MK", docs: 5, complete: 5, days: 2 },
+  { id: "C-0037", investor: "Thornwood Capital LLC", fund: "Meridian Growth II", status: "In Review", risk: "Medium", assignee: "EB", docs: 7, complete: 5, days: 5 },
+  { id: "C-0036", investor: "Peninsula SWF", fund: "Harborview PE V", status: "Pending Docs", risk: "High", assignee: "SR", docs: 10, complete: 3, days: 14 },
+];
+const DOCS_REQUIRED = [
+  { name: "Certificate of Incorporation", sub: "Certified copy, notarised", status: "uploaded" },
+  { name: "Memorandum & Articles of Association", sub: "Latest version", status: "uploaded" },
+  { name: "Register of Directors", sub: "Within 3 months", status: "uploaded" },
+  { name: "Register of Shareholders", sub: "Beneficial ownership ≥25%", status: "pending" },
+  { name: "Director Passports (×2)", sub: "Valid, colour copy", status: "pending" },
+  { name: "Proof of Address — Directors", sub: "Within 3 months", status: "pending" },
+  { name: "Source of Funds Declaration", sub: "Signed by authorised signatory", status: "expiring" },
+  { name: "AML Questionnaire", sub: "Verify standard form", status: "uploaded" },
+];
+const EMAIL_TEMPLATES = [
+  { id: "welcome", name: "Welcome & Checklist", trigger: "On case creation", subject: "Welcome to Verify — Your KYC Checklist for {{Fund Name}}", body: `Dear {{Investor Name}},\n\nThank you for your interest in investing in <span class="highlight">{{Fund Name}}</span>. We're pleased to confirm receipt of your subscription and have opened your onboarding case.\n\nTo complete your KYC verification, please log into your investor portal and upload the following documents:\n\n• Certificate of Incorporation\n• Register of Directors & Shareholders\n• Director identification (passport + proof of address)\n• Source of Funds Declaration\n• Completed AML Questionnaire\n\n<a class="btn-email" href="#">Access Your Portal →</a>\n\nYour dedicated onboarding manager will review your documents as they are received. Most cases are completed within 5–7 business days.\n\nWarm regards,\nThe Verify Team` },
+  { id: "chase", name: "Document Chase", trigger: "Day 5 — docs outstanding", subject: "Action Required: Outstanding Documents — {{Fund Name}}", body: `Dear {{Investor Name}},\n\nWe wanted to follow up on your KYC submission for <span class="highlight">{{Fund Name}}</span>. Our records show the following documents are still outstanding:\n\n<span class="highlight">{{Outstanding Doc List}}</span>\n\nYour fund close date is approaching, and completing your KYC is required before your subscription can be processed.\n\n<a class="btn-email" href="#">Upload Documents Now →</a>\n\nKind regards,\nThe Verify Team` },
+  { id: "expiry", name: "Document Expiry Warning", trigger: "30 days before expiry", subject: "Document Refresh Required — {{Investor Name}}", body: `Dear {{Investor Name}},\n\nThe following documents on file are due to expire within <span class="highlight">30 days</span>:\n\n<span class="highlight">{{Expiring Doc List}}</span>\n\nPlease log into your portal to upload updated versions at your earliest convenience.\n\n<a class="btn-email" href="#">Refresh Documents →</a>\n\nBest regards,\nThe Verify Compliance Team` },
+  { id: "approved", name: "Approval Confirmation", trigger: "On case approval", subject: "KYC Approved — {{Fund Name}} Subscription Confirmed", body: `Dear {{Investor Name}},\n\nWe are pleased to confirm that your KYC verification for <span class="highlight">{{Fund Name}}</span> has been successfully completed and approved.\n\nYour subscription of <span class="highlight">{{Commitment Amount}}</span> has been confirmed.\n\nWelcome to {{Fund Name}}.\n\nYours sincerely,\nThe Verify Team` },
+];
+
+function StatusBadge({ status }) {
+  const map = { "In Review": "badge-blue", "Pending Docs": "badge-amber", "Escalated": "badge-red", "Approved": "badge-green" };
+  return <span className={`badge ${map[status] || "badge-gold"}`}>{status}</span>;
+}
+function RiskBadge({ risk }) {
+  const map = { High: "badge-red", Medium: "badge-amber", Low: "badge-green" };
+  return <span className={`badge ${map[risk]}`}>{risk}</span>;
+}
+function Nav({ screen, setScreen }) {
+  return (
+    <nav className="nav">
+      <div className="nav-logo" onClick={() => setScreen("landing")}>Verify</div>
+      <div className="nav-links">
+        <button className={`nav-btn ${screen==="investor"?"active":""}`} onClick={() => setScreen("investor")}>Investor Portal</button>
+        <button className={`nav-btn ${screen==="queue"?"active":""}`} onClick={() => setScreen("queue")}>Case Queue</button>
+        <button className={`nav-btn ${screen==="reviewer"?"active":""}`} onClick={() => setScreen("reviewer")}>Reviewer</button>
+        <button className={`nav-btn ${screen==="emails"?"active":""}`} onClick={() => setScreen("emails")}>Email Templates</button>
+      </div>
+    </nav>
+  );
+}
+function Landing({ setScreen }) {
+  const portals = [
+    { id: "investor", icon: "◆", title: "Investor Portal", desc: "Submit KYC documents for your fund subscription. Upload exactly what's required, track progress in real time.", accent: "#4a8fd4", features: ["Guided document checklist","Entity & fund selection","Real-time upload tracking","Expiry notifications"] },
+    { id: "queue", icon: "▦", title: "Case Queue", desc: "Portfolio-wide view of all active onboarding cases. Filter, sort, and assign across your full investor book.", accent: "#c9a96e", features: ["Risk-based prioritisation","Multi-fund filtering","Assignee management","SLA tracking"] },
+    { id: "reviewer", icon: "◉", title: "Reviewer Dashboard", desc: "Deep-dive into individual cases. Review documents, flag issues, and approve.", accent: "#4caf7d", features: ["Document review workflow","Issue flagging","Audit trail","One-click approval"] },
+    { id: "emails", icon: "◈", title: "Email Templates", desc: "Automated communications for every stage of the onboarding journey.", accent: "#c0554a", features: ["Welcome & checklist","Document chase","Expiry warnings","Approval confirmation"] },
+  ];
+  return (
+    <div className="hero fade-in">
+      <div className="hero-tag">Verify Platform — Demo Environment</div>
+      <h1 className="hero-title">Investor Onboarding,<br /><span>Reimagined</span></h1>
+      <p className="hero-sub">End-to-end KYC management for private equity and private credit funds.</p>
+      <div className="portal-grid">
+        {portals.map(p => (
+          <div key={p.id} className="portal-card" style={{"--card-accent": p.accent}} onClick={() => setScreen(p.id)}>
+            <div className="portal-icon">{p.icon}</div>
+            <div className="portal-title">{p.title}</div>
+            <p className="portal-desc">{p.desc}</p>
+            <ul className="portal-features">{p.features.map(f => <li key={f}>{f}</li>)}</ul>
+            <button className="portal-cta" style={{borderColor:p.accent,color:p.accent}}
+              onMouseEnter={e=>{e.target.style.background=p.accent;e.target.style.color="#09090f";}}
+              onMouseLeave={e=>{e.target.style.background="transparent";e.target.style.color=p.accent;}}>
+              Enter →
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+function InvestorPortal() {
+  const [step, setStep] = useState(0);
+  const [fund, setFund] = useState("");
+  const [amount, setAmount] = useState("");
+  const [uploaded, setUploaded] = useState({});
+  const steps = ["Fund Selection","Entity Details","Documents","Review & Submit"];
+  const toggleUpload = (name) => setUploaded(u => ({...u,[name]:!u[name]}));
+  const uploadedCount = DOCS_REQUIRED.filter(d => uploaded[d.name] || d.status==="uploaded").length;
+  return (
+    <div className="page fade-in">
+      <div className="page-header"><div className="page-title">Investor Portal</div><div className="page-sub">Complete your KYC to confirm your fund subscription</div></div>
+      <div className="steps" style={{marginBottom:40}}>
+        {steps.map((s,i) => (<React.Fragment key={s}><div className={`step ${i===step?"active":i<step?"done":""}`} onClick={()=>i<step&&setStep(i)} style={{cursor:i<step?"pointer":"default"}}><div className="step-num">{i<step?"✓":i+1}</div><div className="step-label">{s}</div></div>{i<steps.length-1&&<div className="step-line"/>}</React.Fragment>))}
+      </div>
+      {step===0&&(<div className="fade-in"><div className="grid-2"><div><div className="card"><div className="section-label">Select Fund</div>{FUNDS.map(f=>(<div key={f} onClick={()=>setFund(f)} style={{padding:"14px 16px",border:`1px solid ${fund===f?"var(--gold)":"var(--border)"}`,borderRadius:8,marginBottom:10,cursor:"pointer",background:fund===f?"rgba(201,169,110,0.06)":"var(--surface2)",transition:"all 0.2s"}}><div style={{fontSize:15,marginBottom:3}}>{f}</div><div style={{fontSize:12,color:"var(--muted)",fontFamily:"DM Mono,monospace"}}>Private Equity · Vintage 2023</div></div>))}</div></div><div><div className="card"><div className="section-label">Commitment Amount</div><div className="form-group"><label className="form-label">Investment Amount (EUR)</label><input className="form-input" type="text" placeholder="e.g. 5,000,000" value={amount} onChange={e=>setAmount(e.target.value)}/></div><div className="alert alert-amber"><span>⚠</span><span>Minimum commitment for this fund is €2,000,000</span></div></div></div></div><div style={{marginTop:24}}><button className="btn btn-primary" disabled={!fund} onClick={()=>setStep(1)}>Continue →</button></div></div>)}
+      {step===1&&(<div className="fade-in"><div className="grid-2"><div className="card"><div className="section-label">Investor Entity</div><div className="form-group"><label className="form-label">Entity Type</label><select className="form-select"><option value="">Select entity type</option>{ENTITIES.map(e=><option key={e}>{e}</option>)}</select></div><div className="form-group"><label className="form-label">Legal Entity Name</label><input className="form-input" type="text" placeholder="Full legal name as registered"/></div><div className="form-group"><label className="form-label">Country of Incorporation</label><input className="form-input" type="text" placeholder="e.g. Ireland"/></div><div className="form-group"><label className="form-label">Registration Number</label><input className="form-input" type="text" placeholder="Company registration number"/></div></div><div className="card"><div className="section-label">Authorised Signatory</div><div className="form-group"><label className="form-label">Full Name</label><input className="form-input" type="text" placeholder="As it appears on passport"/></div><div className="form-group"><label className="form-label">Title / Role</label><input className="form-input" type="text" placeholder="e.g. Director, Trustee"/></div><div className="form-group"><label className="form-label">Email Address</label><input className="form-input" type="email" placeholder="Direct contact email"/></div><div className="form-group"><label className="form-label">Phone Number</label><input className="form-input" type="tel" placeholder="+353 ..."/></div></div></div><div style={{marginTop:24,display:"flex",gap:12}}><button className="btn btn-outline" onClick={()=>setStep(0)}>← Back</button><button className="btn btn-primary" onClick={()=>setStep(2)}>Continue →</button></div></div>)}
+      {step===2&&(<div className="fade-in"><div className="sidebar-layout"><div><div className="card" style={{marginBottom:16}}><div className="section-label">Progress</div><div style={{marginBottom:10}}><div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}><span style={{fontSize:13}}>{uploadedCount} of {DOCS_REQUIRED.length} documents</span><span style={{fontSize:13,color:"var(--gold)",fontFamily:"DM Mono,monospace"}}>{Math.round(uploadedCount/DOCS_REQUIRED.length*100)}%</span></div><div style={{height:4,background:"var(--border)",borderRadius:2}}><div style={{height:"100%",background:"var(--gold)",borderRadius:2,width:`${uploadedCount/DOCS_REQUIRED.length*100}%`,transition:"width 0.3s"}}/></div></div></div><div className="alert alert-amber"><span>⏱</span><span>Source of Funds Declaration expires in 28 days</span></div></div><div><div className="section-label">Required Documents</div>{DOCS_REQUIRED.map(doc=>{const isUploaded=uploaded[doc.name]||doc.status==="uploaded";const isExpiring=doc.status==="expiring";return(<div key={doc.name} className="doc-item"><div className={`doc-status ${isUploaded?"uploaded":isExpiring?"expiring":"pending"}`}>{isUploaded?"✓":isExpiring?"!":"○"}</div><div style={{flex:1}}><div className="doc-name">{doc.name}</div><div className="doc-sub">{doc.sub}</div></div>{!isUploaded&&<button className="btn btn-outline btn-sm" onClick={()=>toggleUpload(doc.name)}>Upload</button>}{isUploaded&&<span style={{fontSize:12,color:"var(--green)",fontFamily:"DM Mono,monospace"}}>Received</span>}</div>);})}<div style={{marginTop:20}}><div className="upload-zone"><div className="upload-icon">⬆</div><div className="upload-text"><strong>Drag files here</strong> or click to browse</div></div></div></div></div><div style={{marginTop:24,display:"flex",gap:12}}><button className="btn btn-outline" onClick={()=>setStep(1)}>← Back</button><button className="btn btn-primary" onClick={()=>setStep(3)}>Continue →</button></div></div>)}
+      {step===3&&(<div className="fade-in"><div className="grid-2"><div className="card"><div className="section-label">Submission Summary</div><div className="timeline-item"><div className="timeline-dot"/><div className="timeline-content"><div className="timeline-title">Fund: {fund||"Apex Capital III"}</div><div className="timeline-meta">Private Equity · {amount||"€5,000,000"}</div></div></div><div className="timeline-item"><div className="timeline-dot"/><div className="timeline-content"><div className="timeline-title">Entity: Corporate Entity</div><div className="timeline-meta">Ireland · Registered</div></div></div><div className="timeline-item"><div className="timeline-dot"/><div className="timeline-content"><div className="timeline-title">Documents: {uploadedCount}/{DOCS_REQUIRED.length} submitted</div></div></div></div><div className="card"><div className="section-label">What Happens Next</div><div className="timeline-item"><div className="timeline-dot"/><div className="timeline-content"><div className="timeline-title">Case opened immediately</div><div className="timeline-meta">You'll receive a confirmation email</div></div></div><div className="timeline-item"><div className="timeline-dot"/><div className="timeline-content"><div className="timeline-title">Review begins within 1 business day</div></div></div><div className="timeline-item"><div className="timeline-dot"/><div className="timeline-content"><div className="timeline-title">Approval typically in 5–7 days</div></div></div></div></div><div style={{marginTop:24,display:"flex",gap:12}}><button className="btn btn-outline" onClick={()=>setStep(2)}>← Back</button><button className="btn btn-primary" onClick={()=>setStep(0)}>Submit Application ✓</button></div></div>)}
+    </div>
+  );
+}
+function CaseQueue({ setScreen }) {
+  const [filter, setFilter] = useState("All");
+  const filters = ["All","In Review","Pending Docs","Escalated","Approved"];
+  const filtered = filter==="All"?CASES:CASES.filter(c=>c.status===filter);
+  return (
+    <div className="page fade-in">
+      <div className="page-header"><div className="page-title">Case Queue</div><div className="page-sub">All active onboarding cases across your fund portfolio</div></div>
+      <div className="kpi-row">
+        <div className="kpi"><div className="kpi-label">Total Cases</div><div className="kpi-value" style={{color:"var(--gold)"}}>{CASES.length}</div></div>
+        <div className="kpi"><div className="kpi-label">High Risk</div><div className="kpi-value" style={{color:"var(--red)"}}>{CASES.filter(c=>c.risk==="High").length}</div></div>
+        <div className="kpi"><div className="kpi-label">Pending Docs</div><div className="kpi-value" style={{color:"var(--amber)"}}>{CASES.filter(c=>c.status==="Pending Docs").length}</div></div>
+        <div className="kpi"><div className="kpi-label">Approved</div><div className="kpi-value" style={{color:"var(--green)"}}>{CASES.filter(c=>c.status==="Approved").length}</div></div>
+      </div>
+      <div className="filter-row">{filters.map(f=><button key={f} className={`filter-btn ${filter===f?"active":""}`} onClick={()=>setFilter(f)}>{f}</button>)}</div>
+      <div className="card"><div className="table-wrap"><table><thead><tr><th>Case ID</th><th>Investor</th><th>Fund</th><th>Status</th><th>Risk</th><th>Documents</th><th>Days Open</th><th>Assignee</th></tr></thead><tbody>{filtered.map(c=>(<tr key={c.id} onClick={()=>setScreen("reviewer")} style={{cursor:"pointer"}}><td><span style={{fontFamily:"DM Mono,monospace",fontSize:12,color:"var(--gold)"}}>{c.id}</span></td><td style={{fontWeight:600}}>{c.investor}</td><td><span style={{fontSize:12,color:"var(--muted)"}}>{c.fund}</span></td><td><StatusBadge status={c.status}/></td><td><RiskBadge risk={c.risk}/></td><td><div style={{display:"flex",alignItems:"center",gap:8}}><div style={{flex:1,height:3,background:"var(--border)",borderRadius:2,minWidth:60}}><div style={{height:"100%",background:c.complete===c.docs?"var(--green)":"var(--gold)",borderRadius:2,width:`${c.complete/c.docs*100}%`}}/></div><span style={{fontSize:11,fontFamily:"DM Mono,monospace",color:"var(--muted)"}}>{c.complete}/{c.docs}</span></div></td><td><span style={{fontFamily:"DM Mono,monospace",fontSize:12}}>{c.days}d</span></td><td><div style={{width:28,height:28,borderRadius:"50%",background:"var(--surface2)",border:"1px solid var(--border)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontFamily:"DM Mono,monospace",color:"var(--muted)"}}>{c.assignee}</div></td></tr>))}</tbody></table></div></div>
+    </div>
+  );
+}
+function ReviewerDashboard({ setScreen }) {
+  const c = CASES[0];
+  const [approved, setApproved] = useState(false);
+  return (
+    <div className="page fade-in">
+      <div className="page-header" style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between"}}><div><div style={{display:"flex",alignItems:"center",gap:12,marginBottom:8}}><button className="btn btn-outline btn-sm" onClick={()=>setScreen("queue")}>← Queue</button><span style={{fontFamily:"DM Mono,monospace",fontSize:12,color:"var(--gold)"}}>{c.id}</span></div><div className="page-title">{c.investor}</div><div className="page-sub">{c.fund} · Opened {c.days} days ago</div></div><div style={{display:"flex",gap:10}}><StatusBadge status={c.status}/><RiskBadge risk={c.risk}/></div></div>
+      {approved&&<div className="alert alert-green" style={{marginBottom:24}}><span>✓</span><span>Case approved. Confirmation email sent to investor.</span></div>}
+      <div className="sidebar-layout">
+        <div>
+          <div className="card" style={{marginBottom:16}}><div className="section-label">Case Progress</div><div style={{marginBottom:12}}><div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}><span style={{fontSize:13}}>{c.complete}/{c.docs} documents</span><span style={{fontSize:12,color:"var(--gold)",fontFamily:"DM Mono,monospace"}}>{Math.round(c.complete/c.docs*100)}%</span></div><div style={{height:4,background:"var(--border)",borderRadius:2}}><div style={{height:"100%",background:"var(--gold)",width:`${c.complete/c.docs*100}%`,borderRadius:2}}/></div></div><div className="alert alert-red"><span>!</span><span>2 documents outstanding</span></div></div>
+          <div className="card"><div className="section-label">Actions</div><div style={{display:"flex",flexDirection:"column",gap:10}}><button className="btn btn-primary" onClick={()=>setApproved(true)}>✓ Approve Case</button><button className="btn btn-outline">Request Additional Docs</button><button className="btn btn-outline" style={{color:"var(--amber)",borderColor:"var(--amber)"}}>Escalate to Compliance</button></div></div>
+        </div>
+        <div>
+          <div className="section-label">Document Review</div>
+          {DOCS_REQUIRED.map(doc=>{const isUploaded=doc.status==="uploaded";const isExpiring=doc.status==="expiring";return(<div key={doc.name} className="doc-item" style={{marginBottom:10}}><div className={`doc-status ${isUploaded?"uploaded":isExpiring?"expiring":"pending"}`}>{isUploaded?"✓":isExpiring?"!":"○"}</div><div style={{flex:1}}><div className="doc-name">{doc.name}</div><div className="doc-sub">{doc.sub}</div></div><div style={{display:"flex",gap:8}}>{isUploaded&&<><button className="btn btn-outline btn-sm">View</button><button className="btn btn-outline btn-sm" style={{color:"var(--green)",borderColor:"var(--green)"}}>✓ Verify</button></>}{!isUploaded&&<span style={{fontSize:12,color:"var(--muted)",fontFamily:"DM Mono,monospace",alignSelf:"center"}}>Awaiting</span>}</div></div>);})}
+          <div className="card" style={{marginTop:20}}><div className="section-label">Audit Trail</div>{[{text:"Case opened — subscription received",time:"12 days ago"},{text:"SR assigned as reviewer",time:"12 days ago"},{text:"Certificate of Incorporation received",time:"10 days ago"},{text:"M&A and Director Register received",time:"8 days ago"},{text:"AML Questionnaire received",time:"6 days ago"},{text:"Chase email sent — 2 docs outstanding",time:"3 days ago"}].map((item,i)=>(<div key={i} className="timeline-item"><div className="timeline-dot"/><div className="timeline-content"><div className="timeline-title">{item.text}</div><div className="timeline-meta">{item.time}</div></div></div>))}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+function EmailTemplates() {
+  const [active, setActive] = useState(0);
+  const t = EMAIL_TEMPLATES[active];
+  return (
+    <div className="page fade-in">
+      <div className="page-header"><div className="page-title">Email Templates</div><div className="page-sub">Automated communications at every stage of onboarding</div></div>
+      <div className="grid-2" style={{gap:24}}>
+        <div><div className="section-label">Templates</div>{EMAIL_TEMPLATES.map((t,i)=>(<div key={t.id} onClick={()=>setActive(i)} style={{padding:"16px 18px",border:`1px solid ${active===i?"var(--gold)":"var(--border)"}`,borderRadius:10,marginBottom:10,cursor:"pointer",background:active===i?"rgba(201,169,110,0.06)":"var(--surface)",transition:"all 0.2s"}}><div style={{fontSize:14,fontWeight:600,marginBottom:4}}>{t.name}</div><div style={{fontSize:11,fontFamily:"DM Mono,monospace",color:"var(--muted)"}}>{t.trigger}</div></div>))}</div>
+        <div><div className="section-label">Preview</div><div className="email-preview"><div className="email-header"><div className="email-subject">{t.subject}</div><div className="email-from">From: verify@eoghar.dev</div></div><div className="email-body" dangerouslySetInnerHTML={{__html:t.body.replace(/\n/g,"<br/>")}}/></div><div style={{marginTop:16,display:"flex",gap:10}}><button className="btn btn-outline btn-sm">Edit Template</button><button className="btn btn-outline btn-sm">Send Test</button></div></div>
+      </div>
+    </div>
+  );
+}
+function App() {
+  const [screen, setScreen] = useState("landing");
+  const screens = { investor:<InvestorPortal/>, queue:<CaseQueue setScreen={setScreen}/>, reviewer:<ReviewerDashboard setScreen={setScreen}/>, emails:<EmailTemplates/> };
+  return (<><Nav screen={screen} setScreen={setScreen}/>{screen==="landing"?<Landing setScreen={setScreen}/>:screens[screen]}</>);
+}
+ReactDOM.render(<App/>, document.getElementById("root"));
+</script>
+</body>
+</html>
