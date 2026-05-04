@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>eoghar – Investor Services Platform</title>
+<title>eoghar — Investor Services Platform</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;500;600&display=swap" rel="stylesheet"/>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -11,7 +11,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --gold:#C9A96E;--gold-light:rgba(201,169,110,0.15);--gold-muted:rgba(201,169,110,0.08);
+  --gold:#C9A96E;--gold-light:rgba(201,169,110,0.15);--gold-muted:rgba(201,169,110,0.06);
   --gold-dark:#8B6914;--gold-border:rgba(201,169,110,0.22);
   --ink:#09090B;--ink-soft:#18181B;--ink-mid:#3F3F46;--ink-muted:#71717A;
   --paper:#FAFAF9;--paper-warm:#F5F0E8;--paper-mid:#EDE8DF;--paper-dark:#DDD5C8;
@@ -20,6 +20,7 @@
   --green:#15623A;--green-bg:rgba(21,98,58,0.07);
   --blue:#1E3A5F;--blue-bg:rgba(30,58,95,0.07);
   --amber:#92400E;--amber-bg:rgba(146,64,14,0.08);
+  --pending:#7C3AED;--pending-bg:rgba(124,58,237,0.07);
   --radius:3px;
   --shadow-sm:0 1px 8px rgba(0,0,0,0.06);
   --shadow:0 4px 24px rgba(0,0,0,0.09);
@@ -27,219 +28,978 @@
   --transition:all 0.2s cubic-bezier(0.4,0,0.2,1);
 }
 body{font-family:'DM Mono',monospace;background:var(--paper);color:var(--ink);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-.anim-1{animation:fadeUp 0.5s ease both}
-.anim-2{animation:fadeUp 0.5s 0.08s ease both}
-.anim-3{animation:fadeUp 0.5s 0.16s ease both}
-.anim-4{animation:fadeUp 0.5s 0.24s ease both}
-.landing{min-height:100vh;background:var(--ink-soft);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;position:relative;overflow:hidden}
+.anim-1{animation:fadeUp 0.45s ease both}
+.anim-2{animation:fadeUp 0.45s 0.07s ease both}
+.anim-3{animation:fadeUp 0.45s 0.14s ease both}
+.anim-4{animation:fadeUp 0.45s 0.21s ease both}
+.anim-5{animation:fadeUp 0.45s 0.28s ease both}
+
+/* LANDING */
+.landing{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;background:var(--ink-soft);position:relative;overflow:hidden}
 .landing-grain{position:absolute;inset:0;opacity:0.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");pointer-events:none}
-.landing-glow{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(201,169,110,0.06) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
-.landing-eyebrow{font-family:'Syne',sans-serif;font-size:10px;letter-spacing:0.4em;color:var(--gold);text-transform:uppercase;margin-bottom:20px;opacity:0.9}
-.landing-title{font-family:'Cormorant Garamond',serif;font-size:clamp(40px,6vw,72px);color:var(--white);font-weight:300;line-height:1.05;text-align:center;margin-bottom:10px;letter-spacing:-0.01em}
+.landing-glow{position:absolute;width:600px;height:600px;background:radial-gradient(ellipse,rgba(201,169,110,0.07) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+.landing-eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.3em;color:var(--gold);text-transform:uppercase;margin-bottom:20px;opacity:0.8}
+.landing-title{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,5vw,60px);color:var(--white);font-weight:300;letter-spacing:-0.01em;text-align:center;margin-bottom:8px;line-height:1.05}
 .landing-title em{font-style:italic;color:var(--gold)}
-.landing-sub{font-size:11px;color:var(--ink-muted);letter-spacing:0.18em;text-align:center;margin-bottom:64px;text-transform:uppercase}
-.role-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:780px;width:100%}
-@media(max-width:640px){.role-grid{grid-template-columns:1fr}}
-.role-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:var(--radius);padding:36px 28px 32px;cursor:pointer;transition:var(--transition);text-align:center;position:relative;overflow:hidden}
-.role-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(201,169,110,0) 0%,rgba(201,169,110,0.05) 100%);opacity:0;transition:0.3s}
-.role-card:hover{border-color:rgba(201,169,110,0.4);transform:translateY(-3px);box-shadow:0 16px 48px rgba(0,0,0,0.3)}
-.role-card:hover::after{opacity:1}
-.role-card-icon{width:52px;height:52px;border-radius:50%;border:1px solid rgba(201,169,110,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:22px;background:rgba(201,169,110,0.06)}
-.role-card-title{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--white);font-weight:400;margin-bottom:8px;letter-spacing:0.02em}
-.role-card-desc{font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.12em;line-height:1.8;text-transform:uppercase}
-.role-card-arrow{position:absolute;bottom:20px;right:20px;color:var(--gold);font-size:14px;opacity:0;transition:0.2s;transform:translateX(-4px)}
-.role-card:hover .role-card-arrow{opacity:1;transform:translateX(0)}
-.landing-mark{position:absolute;bottom:28px;font-size:10px;color:rgba(255,255,255,0.15);letter-spacing:0.2em;text-transform:uppercase}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);animation:fadeIn 0.2s ease}
-.modal{background:var(--white);width:100%;max-width:420px;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-lg);animation:fadeUp 0.3s ease}
-.modal-head{background:var(--ink);padding:32px;position:relative}
-.modal-head-eyebrow{font-size:10px;letter-spacing:0.3em;color:var(--gold);text-transform:uppercase;margin-bottom:8px}
-.modal-head-title{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--white);font-weight:300;line-height:1.2}
-.modal-body{padding:32px}
-.field-label{display:block;font-size:10px;letter-spacing:0.15em;color:var(--ink-muted);margin-bottom:7px;text-transform:uppercase}
-.field-input{width:100%;padding:11px 14px;border:1px solid var(--paper-dark);border-radius:var(--radius);font-family:'DM Mono',monospace;font-size:13px;background:var(--paper);color:var(--ink);outline:none;transition:border 0.18s;margin-bottom:18px}
-.field-input:focus{border-color:var(--gold);background:var(--white)}
-.hint-box{background:var(--paper-warm);border:1px solid var(--paper-dark);border-radius:var(--radius);padding:10px 14px;font-size:11px;color:var(--ink-muted);margin-bottom:20px;line-height:1.6}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 22px;border:none;border-radius:var(--radius);cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.1em;transition:var(--transition);text-transform:uppercase;white-space:nowrap}
-.btn-primary{background:var(--gold);color:var(--ink-soft);font-weight:500}
+.landing-sub{font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.2em;text-align:center;margin-bottom:52px;text-transform:uppercase}
+.role-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;width:100%;max-width:720px}
+.role-card{background:rgba(255,255,255,0.04);border:1px solid rgba(201,169,110,0.15);border-radius:var(--radius);padding:28px 24px;cursor:pointer;transition:var(--transition);position:relative;overflow:hidden}
+.role-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(201,169,110,0.08) 0%,transparent 60%);opacity:0;transition:opacity 0.2s}
+.role-card:hover{border-color:rgba(201,169,110,0.4);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.3)}
+.role-card:hover::before{opacity:1}
+.role-card-icon{font-size:22px;margin-bottom:14px}
+.role-card-title{font-family:'Syne',sans-serif;font-size:15px;color:var(--white);font-weight:500;margin-bottom:6px}
+.role-card-desc{font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.05em;line-height:1.6}
+.role-card-arrow{position:absolute;bottom:20px;right:20px;color:var(--gold);opacity:0.4;font-size:16px;transition:var(--transition)}
+.role-card:hover .role-card-arrow{opacity:1;transform:translateX(3px)}
+.landing-mark{margin-top:48px;font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:0.25em;text-transform:uppercase}
+
+/* LOGIN */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--paper-warm)}
+.login-box{width:100%;max-width:420px;background:var(--white);border:1px solid var(--paper-dark);border-radius:var(--radius);padding:40px;box-shadow:var(--shadow)}
+.login-back{display:flex;align-items:center;gap:8px;font-size:10px;color:var(--ink-muted);letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;margin-bottom:32px;transition:color 0.15s}
+.login-back:hover{color:var(--gold)}
+.login-eyebrow{font-size:9px;letter-spacing:0.3em;color:var(--gold);text-transform:uppercase;margin-bottom:10px}
+.login-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;color:var(--ink);margin-bottom:28px;line-height:1.1}
+.form-group{margin-bottom:18px}
+.form-label{display:block;font-size:10px;letter-spacing:0.12em;color:var(--ink-muted);text-transform:uppercase;margin-bottom:7px}
+.form-input{width:100%;padding:11px 14px;border:1px solid var(--paper-dark);border-radius:var(--radius);font-family:'DM Mono',monospace;font-size:13px;color:var(--ink);background:var(--paper);transition:var(--transition);outline:none}
+.form-input:focus{border-color:var(--gold);background:var(--white)}
+.form-input.error-input{border-color:var(--red)}
+.form-hint{margin-top:6px;font-size:10px;color:var(--ink-muted);background:var(--paper-warm);padding:8px 10px;border-radius:var(--radius);line-height:1.5}
+.form-error{font-size:11px;color:var(--red);margin-top:10px;padding:9px 12px;background:var(--red-bg);border-radius:var(--radius)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 22px;border-radius:var(--radius);font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.08em;font-weight:500;cursor:pointer;transition:var(--transition);border:none;text-transform:uppercase}
+.btn-primary{background:var(--ink);color:var(--white)}
 .btn-primary:hover{background:var(--gold-dark);color:var(--white)}
-.btn-full{width:100%}
-.btn-ghost{background:transparent;border:1px solid var(--paper-dark);color:var(--ink-muted)}
-.btn-ghost:hover{border-color:var(--gold-border);color:var(--ink)}
+.btn-gold{background:var(--gold);color:var(--ink)}
+.btn-gold:hover{background:var(--gold-dark);color:var(--white)}
+.btn-outline{background:transparent;color:var(--ink);border:1px solid var(--paper-dark)}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+.btn-danger{background:var(--red-bg);color:var(--red);border:1px solid rgba(185,28,28,0.2)}
+.btn-danger:hover{background:var(--red);color:var(--white)}
 .btn-sm{padding:7px 14px;font-size:10px}
-.btn-danger{background:transparent;border:1px solid rgba(185,28,28,0.25);color:var(--red)}
-.btn-danger:hover{background:var(--red-bg)}
-.btn-success{background:var(--green);color:var(--white);border:none}
-.btn-success:hover{opacity:0.9}
-.back-link{background:none;border:none;font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-muted);cursor:pointer;letter-spacing:0.1em;display:block;text-align:center;margin-top:14px;padding:4px}
-.back-link:hover{color:var(--gold)}
-.error-msg{background:var(--red-bg);border:1px solid rgba(185,28,28,0.2);border-radius:var(--radius);padding:10px 14px;font-size:11px;color:var(--red);margin-bottom:16px}
-.nav{height:58px;background:var(--ink);border-bottom:1px solid rgba(201,169,110,0.12);display:flex;align-items:center;padding:0 28px;gap:20px;position:sticky;top:0;z-index:100}
-.nav-brand{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--white);font-weight:300;letter-spacing:0.05em;flex:1}
-.nav-brand span{color:var(--gold);font-style:italic}
-.nav-badge{font-size:10px;letter-spacing:0.2em;color:var(--gold);background:rgba(201,169,110,0.1);border:1px solid rgba(201,169,110,0.2);padding:4px 12px;border-radius:20px;text-transform:uppercase}
-.nav-name{font-size:11px;color:var(--ink-muted)}
-.nav-out{background:none;border:none;font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-muted);cursor:pointer;letter-spacing:0.08em;padding:6px 12px;border-radius:var(--radius);transition:var(--transition)}
-.nav-out:hover{color:var(--gold);background:rgba(201,169,110,0.06)}
-.shell{display:flex;min-height:calc(100vh - 58px)}
-.sidebar{width:224px;background:var(--ink-soft);border-right:1px solid rgba(255,255,255,0.05);padding:28px 12px;flex-shrink:0}
-.sb-section{margin-bottom:28px}
-.sb-label{font-size:9px;letter-spacing:0.3em;color:rgba(255,255,255,0.2);text-transform:uppercase;padding:0 10px;margin-bottom:6px}
-.sb-btn{display:block;width:100%;text-align:left;background:none;border:none;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.06em;color:rgba(255,255,255,0.45);padding:9px 12px;border-radius:var(--radius);cursor:pointer;transition:var(--transition);position:relative}
-.sb-btn:hover{color:rgba(255,255,255,0.85);background:rgba(255,255,255,0.04)}
-.sb-btn.active{color:var(--gold);background:rgba(201,169,110,0.08)}
-.sb-btn.active::before{content:'';position:absolute;left:0;top:6px;bottom:6px;width:2px;background:var(--gold);border-radius:2px}
-.main{flex:1;padding:36px 40px;overflow-y:auto;background:var(--paper)}
-.ph{margin-bottom:28px}
-.ph-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--ink);margin-bottom:4px;line-height:1.2}
-.ph-sub{font-size:11px;color:var(--ink-muted);letter-spacing:0.1em}
-.ph-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
-.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-bottom:28px}
-.card-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px}
-.card-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:28px}
-.card{background:var(--white);border:1px solid var(--paper-dark);border-radius:var(--radius);padding:22px;transition:var(--transition)}
-.card:hover{border-color:var(--gold-border);box-shadow:var(--shadow-sm)}
-.card-clickable{cursor:pointer}
-.card-clickable:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
-.card-eyebrow{font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:10px}
-.card-value{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--ink);line-height:1}
-.card-value-sm{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--ink)}
-.card-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;color:var(--ink);margin-bottom:6px}
-.card-body{font-size:12px;color:var(--ink-muted);line-height:1.6}
-.card-footer{margin-top:16px;padding-top:14px;border-top:1px solid var(--paper-mid);display:flex;align-items:center;justify-content:space-between}
-.card-meta{font-size:10px;color:var(--ink-muted);letter-spacing:0.06em}
-.card-icon{width:40px;height:40px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:14px;border:1px solid var(--paper-dark)}
-.card-accent-gold{border-left:3px solid var(--gold)}
-.card-accent-green{border-left:3px solid var(--green)}
-.card-accent-red{border-left:3px solid var(--red)}
-.card-accent-blue{border-left:3px solid var(--blue)}
-.activity-grid{display:grid;gap:10px;margin-bottom:20px}
-.activity-card{background:var(--white);border:1px solid var(--paper-dark);border-radius:var(--radius);padding:16px 20px;display:flex;align-items:center;gap:16px;transition:var(--transition);cursor:pointer}
-.activity-card:hover{border-color:var(--gold-border);box-shadow:var(--shadow-sm)}
-.activity-icon{width:36px;height:36px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;background:var(--paper-warm);border:1px solid var(--paper-dark)}
-.activity-info{flex:1;min-width:0}
-.activity-title{font-size:13px;color:var(--ink);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.activity-meta{font-size:10px;color:var(--ink-muted);letter-spacing:0.05em}
-.activity-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;white-space:nowrap}
+.btn-full{width:100%}
+.btn:disabled{opacity:0.4;cursor:not-allowed}
+
+/* NEW MANAGER SETUP LINK */
+.setup-link{margin-top:24px;padding-top:20px;border-top:1px solid var(--paper-dark);text-align:center}
+.setup-link-label{font-size:10px;color:var(--ink-muted);margin-bottom:10px;letter-spacing:0.05em}
+.setup-link-btn{font-size:11px;color:var(--gold);cursor:pointer;letter-spacing:0.08em;text-decoration:underline;text-underline-offset:3px;transition:color 0.15s}
+.setup-link-btn:hover{color:var(--gold-dark)}
+
+/* INVITE GATE */
+.invite-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--paper-warm)}
+.invite-box{width:100%;max-width:440px;background:var(--white);border:1px solid var(--paper-dark);border-radius:var(--radius);padding:40px;box-shadow:var(--shadow)}
+.invite-icon{font-size:32px;margin-bottom:20px}
+.invite-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;margin-bottom:8px;line-height:1.1}
+.invite-sub{font-size:11px;color:var(--ink-muted);line-height:1.7;margin-bottom:28px}
+.invite-note{font-size:10px;color:var(--ink-muted);margin-top:16px;line-height:1.6;padding:10px 12px;background:var(--paper-warm);border-radius:var(--radius);border-left:2px solid var(--gold)}
+
+/* ONBOARDING FORM */
+.onboard-wrap{min-height:100vh;background:var(--paper-warm);padding:40px 24px}
+.onboard-inner{max-width:760px;margin:0 auto}
+.onboard-header{margin-bottom:36px}
+.onboard-eyebrow{font-size:9px;letter-spacing:0.3em;color:var(--gold);text-transform:uppercase;margin-bottom:8px}
+.onboard-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;color:var(--ink);margin-bottom:6px}
+.onboard-sub{font-size:11px;color:var(--ink-muted);line-height:1.7}
+.progress-bar{display:flex;gap:6px;margin-bottom:36px}
+.progress-step{flex:1;height:3px;border-radius:2px;background:var(--paper-dark);transition:background 0.3s}
+.progress-step.active{background:var(--gold)}
+.progress-step.done{background:var(--gold-dark)}
+.progress-labels{display:flex;justify-content:space-between;margin-bottom:32px}
+.progress-label{font-size:9px;letter-spacing:0.1em;color:var(--ink-muted);text-transform:uppercase}
+.progress-label.active{color:var(--gold)}
+.form-card{background:var(--white);border:1px solid var(--paper-dark);border-radius:var(--radius);padding:32px;margin-bottom:20px;box-shadow:var(--shadow-sm)}
+.form-card-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--paper-dark);letter-spacing:0.05em}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+@media(max-width:600px){.form-row,.form-row-3{grid-template-columns:1fr}}
+.form-select{width:100%;padding:11px 14px;border:1px solid var(--paper-dark);border-radius:var(--radius);font-family:'DM Mono',monospace;font-size:12px;color:var(--ink);background:var(--paper);outline:none;transition:var(--transition);cursor:pointer}
+.form-select:focus{border-color:var(--gold)}
+.form-textarea{width:100%;padding:11px 14px;border:1px solid var(--paper-dark);border-radius:var(--radius);font-family:'DM Mono',monospace;font-size:12px;color:var(--ink);background:var(--paper);outline:none;transition:var(--transition);resize:vertical;min-height:90px;line-height:1.6}
+.form-textarea:focus{border-color:var(--gold)}
+.jurisdiction-tag{display:inline-flex;align-items:center;gap:6px;background:var(--gold-light);border:1px solid var(--gold-border);border-radius:2px;padding:4px 10px;font-size:11px;color:var(--gold-dark);margin:4px}
+.jurisdiction-tag button{background:none;border:none;color:var(--gold-dark);cursor:pointer;font-size:13px;line-height:1;padding:0 2px}
+.jurisdiction-add{display:flex;gap:8px;margin-top:10px}
+.upload-zone{border:1px dashed var(--paper-dark);border-radius:var(--radius);padding:28px;text-align:center;transition:var(--transition);cursor:pointer;background:var(--paper);position:relative}
+.upload-zone:hover{border-color:var(--gold);background:var(--gold-muted)}
+.upload-zone-icon{font-size:24px;margin-bottom:10px}
+.upload-zone-title{font-size:12px;color:var(--ink-mid);margin-bottom:4px}
+.upload-zone-sub{font-size:10px;color:var(--ink-muted)}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.uploaded-file{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--paper-warm);border:1px solid var(--paper-dark);border-radius:var(--radius);margin-top:8px}
+.uploaded-file-icon{font-size:16px}
+.uploaded-file-name{font-size:11px;color:var(--ink);flex:1}
+.uploaded-file-status{font-size:10px;color:var(--green)}
+.ai-prefill-banner{background:linear-gradient(135deg,rgba(201,169,110,0.1),rgba(201,169,110,0.04));border:1px solid var(--gold-border);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;display:flex;align-items:flex-start;gap:14px}
+.ai-prefill-icon{font-size:20px;flex-shrink:0}
+.ai-prefill-text{font-size:11px;color:var(--ink-mid);line-height:1.6}
+.ai-prefill-text strong{color:var(--gold-dark)}
+.ai-prefill-btn{margin-top:8px}
+.jurisdiction-reporting{background:var(--paper-warm);border:1px solid var(--paper-dark);border-radius:var(--radius);padding:16px;margin-top:8px}
+.jr-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.jr-flag{font-size:13px;font-weight:600;color:var(--ink)}
+.jr-body{display:grid;gap:10px}
+.form-nav{display:flex;justify-content:space-between;align-items:center;margin-top:28px}
+.step-counter{font-size:10px;color:var(--ink-muted);letter-spacing:0.1em}
+
+/* PENDING STATUS */
+.pending-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--paper-warm)}
+.pending-box{width:100%;max-width:520px;background:var(--white);border:1px solid var(--paper-dark);border-radius:var(--radius);padding:48px 40px;box-shadow:var(--shadow);text-align:center}
+.pending-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:20px;background:var(--pending-bg);border:1px solid rgba(124,58,237,0.2);color:var(--pending);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:24px}
+.pending-dot{width:6px;height:6px;border-radius:50%;background:var(--pending);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.pending-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;margin-bottom:12px}
+.pending-sub{font-size:11px;color:var(--ink-muted);line-height:1.8;margin-bottom:28px}
+.checklist{text-align:left;background:var(--paper-warm);border-radius:var(--radius);padding:20px;margin-bottom:28px}
+.checklist-title{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:14px}
+.checklist-item{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--paper-dark);font-size:11px;color:var(--ink-mid)}
+.checklist-item:last-child{border-bottom:none}
+.checklist-item.done{color:var(--green)}
+.checklist-item.pending-item{color:var(--ink-muted)}
+.checklist-icon{font-size:13px;width:18px;text-align:center;flex-shrink:0}
+
+/* APP SHELL */
+.app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+@media(max-width:768px){.app{grid-template-columns:1fr}}
+.sidebar{background:var(--ink-soft);padding:0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sidebar-brand{padding:28px 22px 20px;border-bottom:1px solid rgba(255,255,255,0.05)}
+.sidebar-brand-name{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--white);font-weight:300;letter-spacing:0.02em}
+.sidebar-brand-sub{font-size:9px;color:rgba(255,255,255,0.3);letter-spacing:0.2em;text-transform:uppercase;margin-top:3px}
+.sidebar-user{padding:16px 22px;background:rgba(201,169,110,0.05);border-bottom:1px solid rgba(255,255,255,0.05)}
+.sidebar-user-name{font-size:12px;color:var(--white);font-weight:500}
+.sidebar-user-role{font-size:9px;color:var(--gold);letter-spacing:0.15em;text-transform:uppercase;margin-top:2px}
+.sidebar-user-status{font-size:9px;margin-top:4px;padding:2px 8px;border-radius:10px;display:inline-block}
+.status-live{background:rgba(21,98,58,0.25);color:#4ADE80}
+.status-pending{background:rgba(124,58,237,0.2);color:#A78BFA}
+.nav-section{padding:16px 0}
+.nav-label{font-size:8px;letter-spacing:0.25em;color:rgba(255,255,255,0.2);text-transform:uppercase;padding:0 22px 8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 22px;font-size:11px;color:rgba(255,255,255,0.5);cursor:pointer;transition:var(--transition);letter-spacing:0.04em}
+.nav-item:hover{color:rgba(255,255,255,0.85);background:rgba(255,255,255,0.04)}
+.nav-item.active{color:var(--white);background:rgba(201,169,110,0.1);border-right:2px solid var(--gold)}
+.nav-item-icon{width:16px;text-align:center;font-size:13px}
+.sidebar-logout{margin-top:auto;padding:20px 22px;border-top:1px solid rgba(255,255,255,0.05)}
+.logout-btn{font-size:10px;color:rgba(255,255,255,0.3);cursor:pointer;letter-spacing:0.1em;text-transform:uppercase;transition:color 0.15s}
+.logout-btn:hover{color:rgba(255,255,255,0.6)}
+.main{background:var(--paper);overflow-y:auto}
+.main-header{padding:28px 36px 20px;border-bottom:1px solid var(--paper-dark);background:var(--white)}
+.main-header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+.page-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;color:var(--ink)}
+.page-sub{font-size:10px;color:var(--ink-muted);letter-spacing:0.05em;margin-top:4px}
+.main-body{padding:28px 36px}
+@media(max-width:768px){.main-header,.main-body{padding:20px}}
+
+/* DASHBOARD */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:28px}
+.stat-card{background:var(--white);border:1px solid var(--paper-dark);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow-sm)}
+.stat-label{font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:10px}
+.stat-value{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;color:var(--ink);line-height:1}
+.stat-sub{font-size:10px;color:var(--ink-muted);margin-top:6px}
+.stat-trend-up{color:var(--green)}
+.section-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink);margin-bottom:14px}
+.table-wrap{background:var(--white);border:1px solid var(--paper-dark);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);margin-bottom:24px}
+.table-header{display:grid;padding:12px 20px;background:var(--paper-warm);border-bottom:1px solid var(--paper-dark);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--ink-muted)}
+.table-row{display:grid;padding:14px 20px;border-bottom:1px solid var(--paper-mid);align-items:center;transition:background 0.15s;font-size:11px}
+.table-row:last-child{border-bottom:none}
+.table-row:hover{background:var(--paper)}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:2px;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;font-weight:500}
 .badge-green{background:var(--green-bg);color:var(--green)}
-.badge-gold{background:var(--gold-light);color:var(--gold-dark)}
 .badge-red{background:var(--red-bg);color:var(--red)}
+.badge-gold{background:var(--gold-light);color:var(--gold-dark)}
 .badge-blue{background:var(--blue-bg);color:var(--blue)}
-.badge-grey{background:var(--paper-mid);color:var(--ink-muted)}
-.alert{padding:13px 18px;border-radius:var(--radius);font-size:12px;line-height:1.6;margin-bottom:20px;display:flex;align-items:flex-start;gap:10px}
-.alert-info{background:var(--blue-bg);border:1px solid rgba(30,58,95,0.15);color:var(--blue)}
-.alert-warn{background:var(--amber-bg);border:1px solid rgba(201,169,110,0.25);color:var(--amber)}
-.alert-success{background:var(--green-bg);border:1px solid rgba(21,98,58,0.18);color:var(--green)}
-.alert-error{background:var(--red-bg);border:1px solid rgba(185,28,28,0.18);color:var(--red)}
-.tabs{display:flex;border-bottom:1px solid var(--paper-dark);margin-bottom:24px;gap:0}
-.tab{background:none;border:none;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.1em;color:var(--ink-muted);padding:10px 18px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;text-transform:uppercase;transition:var(--transition)}
-.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
-.tab:hover:not(.active){color:var(--ink)}
-.steps-row{display:flex;align-items:flex-start;margin-bottom:32px;gap:0;position:relative}
-.steps-row::before{content:'';position:absolute;top:14px;left:14px;right:14px;height:1px;background:var(--paper-dark);z-index:0}
-.step-item{flex:1;text-align:center;position:relative;z-index:1}
-.step-circle{width:28px;height:28px;border-radius:50%;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;border:1px solid var(--paper-dark);background:var(--white);color:var(--ink-muted);transition:var(--transition)}
-.step-circle.done{background:var(--green);border-color:var(--green);color:var(--white)}
-.step-circle.active{background:var(--gold);border-color:var(--gold);color:var(--ink)}
-.step-label{font-size:10px;color:var(--ink-muted);letter-spacing:0.06em;line-height:1.4}
-.step-label.active{color:var(--gold)}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
-.form-full{margin-bottom:14px}
-.f-label{display:block;font-size:10px;letter-spacing:0.15em;color:var(--ink-muted);margin-bottom:6px;text-transform:uppercase}
-.f-input{width:100%;padding:10px 13px;border:1px solid var(--paper-dark);border-radius:var(--radius);font-family:'DM Mono',monospace;font-size:12px;background:var(--paper);color:var(--ink);outline:none;transition:border 0.18s}
-.f-input:focus{border-color:var(--gold);background:var(--white)}
-.f-select{appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2371717A' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
-.f-textarea{min-height:96px;resize:vertical}
-.sel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:20px}
-.sel-card{border:1px solid var(--paper-dark);border-radius:var(--radius);padding:16px;cursor:pointer;transition:var(--transition);text-align:center;background:var(--white)}
-.sel-card:hover{border-color:var(--gold-border);background:var(--gold-muted)}
-.sel-card.selected{border-color:var(--gold);background:var(--gold-light)}
-.sel-card-icon{font-size:22px;margin-bottom:8px}
-.sel-card-label{font-size:12px;color:var(--ink);font-weight:500}
-.sel-card-sub{font-size:10px;color:var(--ink-muted);margin-top:3px}
-.upload-card{border:1.5px dashed var(--paper-dark);border-radius:var(--radius);padding:20px;display:flex;align-items:center;gap:14px;margin-bottom:10px;cursor:pointer;transition:var(--transition);background:var(--white)}
-.upload-card:hover{border-color:var(--gold);background:var(--gold-muted)}
-.upload-card.uploaded{border-color:var(--green);background:var(--green-bg)}
-.upload-icon-box{width:38px;height:38px;border-radius:var(--radius);border:1px solid var(--paper-dark);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;background:var(--paper-warm)}
-.upload-info{flex:1}
-.upload-name{font-size:12px;color:var(--ink);margin-bottom:2px}
-.upload-hint{font-size:10px;color:var(--ink-muted)}
-.upload-status{font-size:10px;margin-left:auto;flex-shrink:0}
-.req-section{background:var(--paper-warm);border:1px solid var(--paper-dark);border-radius:var(--radius);padding:18px;margin-bottom:16px}
-.req-title{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:12px}
-.req-tag{display:inline-flex;align-items:center;gap:5px;background:var(--white);border:1px solid var(--paper-dark);border-radius:20px;padding:4px 12px;font-size:11px;color:var(--ink-muted);margin:3px}
-.audit-list{display:grid;gap:0}
-.audit-item{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--paper-mid)}
+.badge-grey{background:rgba(0,0,0,0.05);color:var(--ink-muted)}
+.badge-pending{background:var(--pending-bg);color:var(--pending)}
+.action-row{display:flex;gap:8px;align-items:center}
+.workflow-item{background:var(--white);border:1px solid var(--paper-dark);border-radius:var(--radius);padding:18px 20px;margin-bottom:10px;display:flex;align-items:center;gap:16px;box-shadow:var(--shadow-sm)}
+.workflow-item.overdue{border-left:3px solid var(--red)}
+.workflow-item.due-soon{border-left:3px solid var(--gold)}
+.workflow-item.complete{border-left:3px solid var(--green)}
+.workflow-item.pending-item{border-left:3px solid var(--pending)}
+.workflow-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-red{background:var(--red)}
+.dot-gold{background:var(--gold)}
+.dot-green{background:var(--green)}
+.dot-pending{background:var(--pending)}
+.workflow-info{flex:1}
+.workflow-title{font-size:12px;color:var(--ink);margin-bottom:3px}
+.workflow-meta{font-size:10px;color:var(--ink-muted)}
+.workflow-right{text-align:right}
+.workflow-due{font-size:10px;color:var(--ink-muted)}
+.workflow-assignee{font-size:10px;color:var(--gold-dark);margin-top:2px}
+.empty-state{text-align:center;padding:48px 24px;color:var(--ink-muted);font-size:11px}
+.empty-icon{font-size:28px;margin-bottom:12px}
+
+/* CRM INTEGRATION */
+.crm-card{background:var(--white);border:1px solid var(--paper-dark);border-radius:var(--radius);padding:24px;margin-bottom:16px;box-shadow:var(--shadow-sm)}
+.crm-connected{display:flex;align-items:center;gap:10px;padding:14px 18px;background:var(--green-bg);border:1px solid rgba(21,98,58,0.15);border-radius:var(--radius);margin-bottom:16px}
+.crm-connected-dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.crm-connected-text{font-size:11px;color:var(--green)}
+.crm-trigger-item{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--paper-mid);font-size:11px}
+.crm-trigger-item:last-child{border-bottom:none}
+.crm-trigger-icon{font-size:16px;width:24px;text-align:center}
+.crm-trigger-label{flex:1;color:var(--ink-mid)}
+.crm-trigger-status{font-size:10px}
+
+/* APPROVAL PANEL */
+.approval-card{background:var(--white);border:1px solid var(--paper-dark);border-radius:var(--radius);padding:24px;margin-bottom:14px;box-shadow:var(--shadow-sm)}
+.approval-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
+.approval-info{}
+.approval-title{font-size:13px;color:var(--ink);font-weight:500;margin-bottom:4px}
+.approval-meta{font-size:10px;color:var(--ink-muted);line-height:1.5}
+.approval-actions{display:flex;gap:8px}
+.preview-box{background:var(--paper-warm);border:1px solid var(--paper-dark);border-radius:var(--radius);padding:16px;font-size:11px;color:var(--ink-mid);line-height:1.8;margin:14px 0}
+.preview-box p{margin-bottom:8px}
+.preview-box p:last-child{margin-bottom:0}
+.approval-signatories{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.signatory{display:flex;align-items:center;gap:6px;padding:5px 12px;border:1px solid var(--paper-dark);border-radius:2px;font-size:10px;color:var(--ink-muted)}
+.signatory.signed{border-color:rgba(21,98,58,0.3);color:var(--green);background:var(--green-bg)}
+.signatory-icon{font-size:11px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.2s ease}
+.modal{background:var(--white);border-radius:var(--radius);padding:32px;width:100%;max-width:520px;box-shadow:var(--shadow-lg);animation:fadeUp 0.25s ease}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;margin-bottom:8px}
+.modal-sub{font-size:11px;color:var(--ink-muted);margin-bottom:24px;line-height:1.6}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:24px}
+.divider{height:1px;background:var(--paper-dark);margin:24px 0}
+.tag{display:inline-flex;align-items:center;padding:3px 9px;border-radius:2px;font-size:10px;background:var(--paper-warm);border:1px solid var(--paper-dark);color:var(--ink-muted);margin:2px}
+
+/* AUDIT TRAIL */
+.audit-item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--paper-mid);font-size:11px}
 .audit-item:last-child{border-bottom:none}
-.audit-line{display:flex;flex-direction:column;align-items:center;gap:0;flex-shrink:0}
-.audit-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:3px}
-.audit-content{flex:1}
-.audit-meta{font-size:10px;color:var(--ink-muted);margin-bottom:5px;letter-spacing:0.05em}
-.audit-action{font-size:12px;color:var(--ink);margin-bottom:4px}
-.audit-diff{font-size:11px;color:var(--ink-muted);font-style:italic;line-height:1.5}
-.audit-diff strong{color:var(--ink);font-style:normal}
-.template-list{display:grid;gap:10px;margin-bottom:0}
-.tpl-card{background:var(--white);border:1px solid var(--paper-dark);border-radius:var(--radius);padding:16px 18px;cursor:pointer;transition:var(--transition)}
-.tpl-card:hover{border-color:var(--gold-border)}
-.tpl-card.active{border-color:var(--gold);background:var(--gold-muted)}
-.tpl-name{font-size:13px;color:var(--ink);margin-bottom:4px}
-.tpl-trigger{font-size:10px;color:var(--ink-muted);letter-spacing:0.06em}
-.email-preview{background:var(--paper-warm);border:1px solid var(--paper-dark);border-radius:var(--radius);padding:24px;font-size:13px;line-height:1.7;color:var(--ink-muted)}
-.email-preview-subject{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--ink);font-weight:400;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--gold-border)}
-.email-action-row{border-top:1px solid var(--paper-dark);margin-top:16px;padding-top:16px}
-.email-action-label{font-size:10px;color:var(--ink-muted);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:10px}
-.ea-btn{display:inline-block;padding:10px 20px;border-radius:var(--radius);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.08em;margin-right:8px;margin-bottom:8px;cursor:default;text-transform:uppercase}
-.ea-confirm{background:var(--green);color:var(--white)}
-.ea-update{background:var(--paper-dark);color:var(--ink-soft)}
-.divider{border:none;border-top:1px solid var(--paper-dark);margin:24px 0}
-.section-label{font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:14px}
-.flex{display:flex}.flex-center{align-items:center}.flex-between{justify-content:space-between}
-.gap-8{gap:8px}.gap-12{gap:12px}.gap-16{gap:16px}
-.mt-8{margin-top:8px}.mt-16{margin-top:16px}.mt-24{margin-top:24px}
-.mb-8{margin-bottom:8px}.mb-16{margin-bottom:16px}.mb-24{margin-bottom:24px}
-.text-muted{color:var(--ink-muted);font-size:11px}
+.audit-time{color:var(--ink-muted);white-space:nowrap;min-width:80px}
+.audit-icon{width:20px;text-align:center;flex-shrink:0}
+.audit-text{flex:1;color:var(--ink-mid);line-height:1.5}
+.audit-actor{color:var(--ink);font-weight:500}
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const {useState,useMemo}=React;
-const USERS={"investor@demo.com":{role:"investor",name:"James Harrington",password:"demo"},"manager@demo.com":{role:"fund_manager",name:"Sarah Chen",password:"demo"},"admin@demo.com":{role:"admin",name:"Eoghan Harney",password:"demo"}};
-const FUNDS=[{id:1,name:"Apex Capital III",vintage:2022,status:"Open",aum:"€240M",investors:14,currency:"EUR"},{id:2,name:"Meridian Growth II",vintage:2021,status:"Closed",aum:"€180M",investors:22,currency:"EUR"},{id:3,name:"Harborview PE V",vintage:2023,status:"Open",aum:"€320M",investors:8,currency:"EUR"}];
-const DOC_MATRIX={individual:{base:[{id:"passport",name:"Passport / National ID",hint:"Valid, in date. All pages."},{id:"poa",name:"Proof of Address",hint:"Utility bill or bank statement, dated within 3 months."},{id:"sof",name:"Source of Funds Declaration",hint:"Signed declaration of source of investment funds."},{id:"amls",name:"AML Self-Certification Form",hint:"Complete the platform AML questionnaire."}],ireland:[{id:"ppsn",name:"PPS Number Confirmation",hint:"Required for Irish-resident individuals under CRS."}],luxembourg:[{id:"tax_cert",name:"Tax Residence Certificate",hint:"Issued by Luxembourg tax authority (AED)."},{id:"fatca",name:"FATCA / CRS Self-Certification",hint:"W-9 or W-8BEN as applicable."}],uk:[{id:"ni",name:"National Insurance Confirmation",hint:"Required for UK-resident individual investors."}],usa:[{id:"w9",name:"IRS Form W-9",hint:"Required for US persons. Must be original signed copy."},{id:"accredited",name:"Accredited Investor Certificate",hint:"Signed confirmation of accredited investor status."}],cayman:[{id:"fatca_ci",name:"FATCA / CRS Declaration (Cayman)",hint:"Complete Cayman Islands FATCA self-certification."}]},corporate:{base:[{id:"cert_inc",name:"Certificate of Incorporation",hint:"Certified copy, apostilled if non-EEA."},{id:"memo",name:"Memorandum & Articles of Association",hint:"Full constitutional documents."},{id:"reg_extract",name:"Company Registry Extract",hint:"Dated within 3 months."},{id:"dir_list",name:"Register of Directors",hint:"Full list of current directors."},{id:"ub0",name:"Register of UBOs",hint:"Individuals owning or controlling 25%+."},{id:"corp_sof",name:"Source of Funds – Entity",hint:"Board resolution and source of funds confirmation."}],ireland:[{id:"cro",name:"CRO Filing Confirmation",hint:"Latest annual return filed with the Companies Registration Office."},{id:"ppsn_dir",name:"PPS Numbers – Directors",hint:"Required for all Irish-resident directors."}],luxembourg:[{id:"rcs",name:"RCS Extract",hint:"Luxembourg Trade and Companies Register extract, dated within 3 months."},{id:"lux_ubo",name:"RBE Registration Confirmation",hint:"Confirmed registration in the Luxembourg Register of Beneficial Owners."}],uk:[{id:"ch",name:"Companies House Confirmation Statement",hint:"Most recent confirmation statement filed at Companies House."},{id:"psc",name:"PSC Register",hint:"Register of People with Significant Control."}],usa:[{id:"ein",name:"EIN Confirmation",hint:"IRS Employer Identification Number letter."},{id:"w8ben_e",name:"IRS Form W-8BEN-E",hint:"Required for non-US entities receiving US-sourced income."}],cayman:[{id:"ci_reg",name:"Cayman Islands Registration Certificate",hint:"CIMA or Registrar of Companies certificate."},{id:"ci_ubo",name:"UBO Declaration – Cayman",hint:"Signed UBO declaration per Cayman AML regulations."}]},trust:{base:[{id:"trust_deed",name:"Trust Deed",hint:"Full executed trust deed, certified copy."},{id:"trust_cert",name:"Certificate of Trust",hint:"If applicable."},{id:"trustees",name:"Trustee Identification",hint:"ID and address proof for all trustees."},{id:"trust_ubo",name:"Beneficiary Schedule",hint:"Full list of beneficiaries or class of beneficiaries."},{id:"trust_sof",name:"Source of Trust Assets",hint:"Declaration of how trust assets were funded."}],ireland:[{id:"trust_ppsn",name:"PPS – Trustees",hint:"PPS numbers for all Irish-resident trustees."}],luxembourg:[{id:"trust_rcs",name:"Trust Registration (if applicable)",hint:"Luxembourg does not recognise trusts natively – legal opinion may be required."}],uk:[{id:"trust_uk_reg",name:"Trust Registration Service (TRS) Confirmation",hint:"HMRC Trust Registration Service reference number."}],usa:[{id:"trust_w9",name:"Trust Form W-9 / W-8",hint:"As applicable based on US nexus."}],cayman:[]},partnership:{base:[{id:"lpa",name:"Limited Partnership Agreement",hint:"Executed LP agreement, certified copy."},{id:"part_reg",name:"Partnership Registration Certificate",hint:"Issued by relevant authority."},{id:"gp_id",name:"General Partner Identification",hint:"Full KYC on the General Partner entity and UBOs."},{id:"part_ubo",name:"LP Register",hint:"Schedule of limited partners owning 25%+."},{id:"part_sof",name:"Source of Partnership Funds",hint:"Board/GP resolution confirming source of capital."}],ireland:[{id:"lp_cro",name:"Limited Partnership CRO Filing",hint:"Registration confirmation from CRO."}],luxembourg:[{id:"lp_rcs",name:"SCSp / SCS RCS Extract",hint:"Luxembourg partnership registry extract."}],uk:[{id:"lp_ch",name:"Companies House LP Registration",hint:"Confirmation of LP registration at Companies House."}],usa:[{id:"lp_ein",name:"Partnership EIN",hint:"IRS EIN letter for the partnership."},{id:"lp_w8",name:"Form W-8IMY",hint:"Required for foreign partnerships with US investors."}],cayman:[{id:"lp_ci",name:"Cayman Islands LP Registration",hint:"Registration certificate from CIMA or Registrar."}]}};
-const JURISDICTIONS=[{id:"ireland",label:"Ireland",flag:"🇮🇪"},{id:"luxembourg",label:"Luxembourg",flag:"🇱🇺"},{id:"uk",label:"United Kingdom",flag:"🇬🇧"},{id:"usa",label:"United States",flag:"🇺🇸"},{id:"cayman",label:"Cayman Islands",flag:"🇰🇾"},{id:"other",label:"Other",flag:"🌐"}];
-const MY_DOCS=[{id:1,name:"Passport – James Harrington",type:"KYC",fund:"Apex Capital III",date:"12 Mar 2025",status:"Verified",icon:"🔐"},{id:2,name:"Proof of Address",type:"KYC",fund:"Apex Capital III",date:"12 Mar 2025",status:"Verified",icon:"🔐"},{id:3,name:"Source of Funds Declaration",type:"AML",fund:"Apex Capital III",date:"13 Mar 2025",status:"Pending Review",icon:"🔐"},{id:4,name:"Q4 2024 Capital Statement",type:"Fund Report",fund:"Apex Capital III",date:"15 Jan 2025",status:"Received",icon:"📄"},{id:5,name:"Distribution Notice – Mar 2025",type:"Distribution",fund:"Apex Capital III",date:"01 Mar 2025",status:"Action Required",icon:"📬"}];
-const ALL_INVESTOR_DOCS=[{id:1,investor:"James Harrington",fund:"Apex Capital III",doc:"Passport",status:"Verified",date:"12 Mar 2025"},{id:2,investor:"James Harrington",fund:"Apex Capital III",doc:"Proof of Address",status:"Verified",date:"12 Mar 2025"},{id:3,investor:"Emma Walsh",fund:"Meridian Growth II",doc:"Passport",status:"Pending",date:"14 Mar 2025"},{id:4,investor:"Emma Walsh",fund:"Meridian Growth II",doc:"Source of Funds",status:"Pending",date:"14 Mar 2025"},{id:5,investor:"David Park",fund:"Harborview PE V",doc:"Passport",status:"Verified",date:"10 Mar 2025"},{id:6,investor:"David Park",fund:"Harborview PE V",doc:"AML Questionnaire",status:"Flagged",date:"10 Mar 2025"}];
-const FM_DOCS=[{id:1,name:"Apex Capital III – Q4 2024 Report",type:"Fund Report",date:"15 Jan 2025",status:"Published"},{id:2,name:"Investor KYC Summary – Apex III",type:"Compliance",date:"20 Feb 2025",status:"Published"},{id:3,name:"LP Advisory Board Pack – Mar 2025",type:"Advisory",date:"05 Mar 2025",status:"Published"}];
-const EMAIL_TEMPLATES=[{id:1,name:"Distribution Notice",trigger:"On distribution event",subject:"Distribution Notice – Action Required",body:"A distribution is being processed for [Fund Name]. Please review and confirm your bank details and registered address are current and correct.",actions:["Confirm Details are Correct","Update My Details"]},{id:2,name:"KYC / AML Request",trigger:"On investor onboarding",subject:"KYC/AML Documentation Required – [Fund Name]",body:"To complete your onboarding for [Fund Name], we require the following documentation. Please log in to your investor portal to upload your documents at your earliest convenience.",actions:["Upload Documents Now"]},{id:3,name:"Capital Call Notice",trigger:"On capital call",subject:"Capital Call Notice – [Fund Name]",body:"A capital call has been issued for [Fund Name]. Please confirm receipt of this notice and your intention to fund by the date specified in the attached schedule.",actions:["Confirm Receipt","Query This Call"]},{id:4,name:"Annual Review Request",trigger:"Annually / on trigger",subject:"Annual KYC Review – Action Required",body:"As part of our ongoing AML obligations, we are conducting an annual review of investor documentation. Please log in to confirm your details are up to date.",actions:["Confirm Details","Upload Updated Documents"]}];
-const AUDIT_LOG=[{id:1,user:"James Harrington",role:"investor",action:"Bank details updated",field:"IBAN",from:"IE12 BOFI 9000 0112 3456 78",to:"IE29 AIBK 9311 5212 3456 78",date:"01 Mar 2025, 14:32",color:"var(--gold)"},{id:2,user:"James Harrington",role:"investor",action:"Address confirmed – no change",field:"Registered Address",from:null,to:"12 Merrion Square, Dublin 2",date:"01 Mar 2025, 14:35",color:"var(--green)"},{id:3,user:"Eoghan Harney",role:"admin",action:"Document pushed to fund manager",field:"Document",from:null,to:"Apex Capital III – Q4 2024 Report",date:"15 Jan 2025, 09:10",color:"var(--blue)"},{id:4,user:"Eoghan Harney",role:"admin",action:"Email sent to investor",field:"Template used",from:null,to:"Distribution Notice → James Harrington",date:"01 Mar 2025, 09:00",color:"var(--blue)"},{id:5,user:"Sarah Chen",role:"fund_manager",action:"Document downloaded",field:"Document",from:null,to:"Apex Capital III – Q4 2024 Report",date:"16 Jan 2025, 11:22",color:"var(--amber)"}];
-function StatCard({label,value,accent,color}){return(<div className={`card ${accent||""}`}><div className="card-eyebrow">{label}</div><div className="card-value" style={color?{color}:{}}>{value}</div></div>);}
-function ActivityCard({icon,title,meta,badge,badgeClass,actions}){return(<div className="activity-card"><div className="activity-icon">{icon}</div><div className="activity-info"><div className="activity-title">{title}</div><div className="activity-meta">{meta}</div></div><div className="activity-right">{badge&&<span className={`badge ${badgeClass||"badge-grey"}`}>{badge}</span>}{actions}</div></div>);}
-function badgeClass(status){const map={"Verified":"badge-green","Published":"badge-green","Received":"badge-green","Confirmed":"badge-green","Action Required":"badge-red","Flagged":"badge-red","Pending":"badge-gold","Pending Review":"badge-gold","Closed":"badge-grey","Open":"badge-green"};return map[status]||"badge-grey";}
-function Landing({onRole}){return(<div className="landing"><div className="landing-grain"/><div className="landing-glow"/><div className="landing-eyebrow anim-1">Investor Services Platform</div><h1 className="landing-title anim-2">Secure access to<br/><em>your</em> portal</h1><p className="landing-sub anim-3">Select your role to continue</p><div className="role-grid anim-4">{[{role:"investor",icon:"👤",title:"Investor",desc:"Funds · Documents · Onboarding"},{role:"fund_manager",icon:"📊",title:"Fund Manager",desc:"KYC/AML Docs · Fund Materials"},{role:"admin",icon:"🏛",title:"Admin Firm",desc:"Super User · Templates · Oversight"}].map(r=>(<div className="role-card" key={r.role} onClick={()=>onRole(r.role)}><div className="role-card-icon">{r.icon}</div><div className="role-card-title">{r.title}</div><div className="role-card-desc">{r.desc}</div><div className="role-card-arrow">→</div></div>))}</div><div className="landing-mark">Confidential · Authorised Access Only</div></div>);}
-function Login({role,onLogin,onBack}){const [email,setEmail]=useState("");const [pass,setPass]=useState("");const [err,setErr]=useState("");const hints={"investor":"investor@demo.com","fund_manager":"manager@demo.com","admin":"admin@demo.com"};const labels={"investor":"Investor Portal","fund_manager":"Fund Manager Portal","admin":"Admin Firm Portal"};const attempt=()=>{const u=USERS[email.trim().toLowerCase()];if(u&&u.role===role&&u.password===pass){onLogin({...u,email})}else setErr("Invalid credentials. Check the hint below.");};return(<div className="overlay"><div className="modal"><div className="modal-head"><div className="modal-head-eyebrow">{labels[role]}</div><div className="modal-head-title">Secure Login</div></div><div className="modal-body">{err&&<div className="error-msg">{err}</div>}<label className="field-label">Email Address</label><input className="field-input" type="email" placeholder={hints[role]} value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>e.key==="Enter"&&attempt()}/><label className="field-label">Password</label><input className="field-input" type="password" placeholder="••••••••" value={pass} onChange={e=>setPass(e.target.value)} onKeyDown={e=>e.key==="Enter"&&attempt()}/><div className="hint-box">Demo: <strong>{hints[role]}</strong> · password: <strong>demo</strong></div><button className="btn btn-primary btn-full" onClick={attempt}>Access Portal →</button><button className="back-link" onClick={onBack}>← Back to portal selection</button></div></div></div>);}
-function Nav({user,onLogout}){const labels={"investor":"Investor","fund_manager":"Fund Manager","admin":"Admin Firm"};return(<div className="nav"><div className="nav-brand">eoghar<span>.dev</span></div><span className="nav-badge">{labels[user.role]}</span><span className="nav-name">{user.name}</span><button className="nav-out" onClick={onLogout}>Sign out</button></div>);}
-function InvestorPortal({user}){const [s,setS]=useState("overview");const nav=[{id:"overview",label:"Overview"},{id:"funds",label:"My Funds"},{id:"documents",label:"Document Repository"},{id:"onboarding",label:"Onboarding"}];return(<div className="shell"><div className="sidebar"><div className="sb-section"><div className="sb-label">Investor</div>{nav.map(n=><button key={n.id} className={`sb-btn ${s===n.id?"active":""}`} onClick={()=>setS(n.id)}>{n.label}</button>)}</div></div><div className="main">{s==="overview"&&<InvOverview user={user} setS={setS}/>}{s==="funds"&&<InvFunds/>}{s==="documents"&&<InvDocs/>}{s==="onboarding"&&<InvOnboarding/>}</div></div>);}
-function InvOverview({user,setS}){const actionDocs=MY_DOCS.filter(d=>d.status==="Action Required"||d.status==="Pending Review");return(<><div className="ph anim-1"><div className="ph-title">Welcome back, {user.name.split(" ")[0]}</div><div className="ph-sub">Your investment portfolio at a glance</div></div><div className="card-grid anim-2"><StatCard label="Funds Invested" value="1" accent="card-accent-gold"/><StatCard label="Documents" value={MY_DOCS.length} accent="card-accent-blue"/><StatCard label="Actions Required" value={actionDocs.length} accent={actionDocs.length?"card-accent-red":"card-accent-green"} color={actionDocs.length?"var(--red)":"var(--green)"}/><StatCard label="Total Commitment" value="€2.5M" accent="card-accent-gold"/></div>{actionDocs.length>0&&(<div className="alert alert-warn anim-3">⚠ You have {actionDocs.length} item{actionDocs.length>1?"s":""} requiring your attention.<button className="btn btn-ghost btn-sm" style={{marginLeft:12}} onClick={()=>setS("documents")}>View →</button></div>)}<div className="section-label anim-3">Recent Documents</div><div className="activity-grid anim-4">{MY_DOCS.slice(0,3).map(d=>(<ActivityCard key={d.id} icon={d.icon} title={d.name} meta={`${d.fund} · ${d.date}`} badge={d.status} badgeClass={badgeClass(d.status)} actions={<button className="btn btn-ghost btn-sm">View</button>}/>))}</div></>);}
-function InvFunds(){return(<><div className="ph anim-1"><div className="ph-title">My Funds</div><div className="ph-sub">Funds you are invested in</div></div><div className="anim-2">{FUNDS.filter(f=>f.id===1).map(f=>(<div className="card mb-16" key={f.id} style={{padding:28}}><div className="flex flex-between flex-center mb-16"><div><div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,color:"var(--ink)",marginBottom:4}}>{f.name}</div><div className="text-muted">Vintage {f.vintage}</div></div><span className={`badge ${badgeClass(f.status)}`}>{f.status}</span></div><div className="card-grid-3" style={{marginBottom:0}}>{[["AUM",f.aum],["Co-Investors",f.investors],["Your Commitment","€2.5M"],["Currency",f.currency],["Vintage",f.vintage],["My Status","Active"]].map(([k,v])=>(<div key={k} className="card" style={{padding:16}}><div className="card-eyebrow">{k}</div><div className="card-value-sm">{v}</div></div>))}</div></div>))}</div></>);}
-function InvDocs(){const [filter,setFilter]=useState("All");const types=["All",...new Set(MY_DOCS.map(d=>d.type))];const filtered=filter==="All"?MY_DOCS:MY_DOCS.filter(d=>d.type===filter);return(<><div className="ph anim-1"><div className="ph-title">Document Repository</div><div className="ph-sub">All documents relating to your investments</div></div><div className="tabs anim-2">{types.map(t=><button key={t} className={`tab ${filter===t?"active":""}`} onClick={()=>setFilter(t)}>{t}</button>)}</div><div className="activity-grid anim-3">{filtered.map(d=>(<ActivityCard key={d.id} icon={d.icon} title={d.name} meta={`${d.fund} · ${d.date} · ${d.type}`} badge={d.status} badgeClass={badgeClass(d.status)} actions={<div className="flex gap-8">{d.status==="Action Required"&&<button className="btn btn-primary btn-sm">Action →</button>}<button className="btn btn-ghost btn-sm">View</button></div>}/>))}</div></>);}
-function InvOnboarding(){const [step,setStep]=useState(0);const [entityType,setEntityType]=useState(null);const [jurisdiction,setJurisdiction]=useState(null);const [uploaded,setUploaded]=useState({});const [fundSel,setFundSel]=useState(null);const steps=["Entity Type","Jurisdiction","Your Details","Fund Selection","Documentation","Review & Submit"];const requiredDocs=useMemo(()=>{if(!entityType) return [];const matrix=DOC_MATRIX[entityType]||{};const base=matrix.base||[];const jurisDocs=(jurisdiction&&jurisdiction!=="other")?matrix[jurisdiction]||[]:[];return[...base,...jurisDocs];},[entityType,jurisdiction]);const allUploaded=requiredDocs.length>0&&requiredDocs.every(d=>uploaded[d.id]);return(<><div className="ph anim-1"><div className="ph-title">Investor Onboarding</div><div className="ph-sub">Complete your KYC / AML submission</div></div><div className="steps-row anim-2">{steps.map((s,i)=>(<div className="step-item" key={i}><div className={`step-circle ${i<step?"done":i===step?"active":""}`}>{i<step?"✓":i+1}</div><div className={`step-label ${i===step?"active":""}`}>{s}</div></div>))}</div>{step===0&&(<div className="card anim-3" style={{padding:28}}><div className="section-label">What type of entity are you investing as?</div><div className="sel-grid">{[{id:"individual",icon:"👤",label:"Individual",sub:"Natural person"},{id:"corporate",icon:"🏢",label:"Corporate",sub:"Ltd, SA, GmbH, LLC etc."},{id:"trust",icon:"🏦",label:"Trust",sub:"Discretionary or fixed trust"},{id:"partnership",icon:"🤝",label:"Partnership",sub:"LP, LLP, SCSp etc."}].map(e=>(<div key={e.id} className={`sel-card ${entityType===e.id?"selected":""}`} onClick={()=>setEntityType(e.id)}><div className="sel-card-icon">{e.icon}</div><div className="sel-card-label">{e.label}</div><div className="sel-card-sub">{e.sub}</div></div>))}</div><div className="flex gap-8 mt-16"><button className="btn btn-primary" disabled={!entityType} onClick={()=>entityType&&setStep(1)}>Continue →</button></div></div>)}{step===1&&(<div className="card anim-3" style={{padding:28}}><div className="section-label">What is your jurisdiction of residence / incorporation?</div><div className="alert alert-info mb-16">Your document requirements will be tailored to the specific AML/KYC rules of your jurisdiction.</div><div className="sel-grid">{JURISDICTIONS.map(j=>(<div key={j.id} className={`sel-card ${jurisdiction===j.id?"selected":""}`} onClick={()=>setJurisdiction(j.id)}><div className="sel-card-icon">{j.flag}</div><div className="sel-card-label">{j.label}</div></div>))}</div>{jurisdiction&&(<div className="req-section mt-16"><div className="req-title">Documents required for {entityType} · {JURISDICTIONS.find(j=>j.id===jurisdiction)?.label}</div>{requiredDocs.map(d=><span key={d.id} className="req-tag">📄 {d.name}</span>)}{requiredDocs.length===0&&<span className="text-muted">Standard documentation applies.</span>}</div>)}<div className="flex gap-8 mt-16"><button className="btn btn-ghost" onClick={()=>setStep(0)}>← Back</button><button className="btn btn-primary" disabled={!jurisdiction} onClick={()=>jurisdiction&&setStep(2)}>Continue →</button></div></div>)}{step===2&&(<div className="card anim-3" style={{padding:28}}><div className="section-label">{entityType==="individual"?"Personal Details":"Entity Details"}</div>{entityType==="individual"?(<><div className="form-grid"><div><label className="f-label">First Name</label><input className="f-input" placeholder="James"/></div><div><label className="f-label">Last Name</label><input className="f-input" placeholder="Harrington"/></div></div><div className="form-grid"><div><label className="f-label">Date of Birth</label><input className="f-input" type="date"/></div><div><label className="f-label">Nationality</label><input className="f-input" placeholder="Irish"/></div></div></>):(<><div className="form-full"><label className="f-label">Legal Entity Name</label><input className="f-input" placeholder="Full registered legal name"/></div><div className="form-grid"><div><label className="f-label">Registration Number</label><input className="f-input" placeholder="Company/entity number"/></div><div><label className="f-label">Date of Incorporation</label><input className="f-input" type="date"/></div></div></>)}<div className="form-full"><label className="f-label">Email Address</label><input className="f-input" placeholder="contact@example.com"/></div><div className="form-full"><label className="f-label">Registered Address</label><input className="f-input" placeholder="Full registered address"/></div><div className="form-grid"><div><label className="f-label">City</label><input className="f-input" placeholder="Dublin"/></div><div><label className="f-label">Country</label><input className="f-input" value={JURISDICTIONS.find(j=>j.id===jurisdiction)?.label||""} readOnly style={{background:"var(--paper-mid)"}}/></div></div><div className="flex gap-8 mt-16"><button className="btn btn-ghost" onClick={()=>setStep(1)}>← Back</button><button className="btn btn-primary" onClick={()=>setStep(3)}>Continue →</button></div></div>)}{step===3&&(<div className="card anim-3" style={{padding:28}}><div className="section-label">Select Fund to Invest In</div><div className="activity-grid">{FUNDS.map(f=>(<div key={f.id} className="activity-card" style={{border:fundSel===f.id?"1px solid var(--gold)":"",background:fundSel===f.id?"var(--gold-muted)":""}} onClick={()=>setFundSel(f.id)}><div className="activity-icon">📈</div><div className="activity-info"><div className="activity-title">{f.name}</div><div className="activity-meta">Vintage {f.vintage} · {f.aum} AUM</div></div><span className={`badge ${badgeClass(f.status)}`}>{f.status}</span>{fundSel===f.id&&<span style={{color:"var(--gold)",fontSize:18}}>✓</span>}</div>))}</div><div className="flex gap-8 mt-16"><button className="btn btn-ghost" onClick={()=>setStep(2)}>← Back</button><button className="btn btn-primary" disabled={!fundSel} onClick={()=>fundSel&&setStep(4)}>Continue →</button></div></div>)}{step===4&&(<div className="card anim-3" style={{padding:28}}><div className="section-label">Required Documentation</div><div className="alert alert-info mb-16">Based on your profile — <strong>{entityType}</strong> · <strong>{JURISDICTIONS.find(j=>j.id===jurisdiction)?.label}</strong> — the following {requiredDocs.length} documents are required.</div>{requiredDocs.map(doc=>(<div key={doc.id} className={`upload-card ${uploaded[doc.id]?"uploaded":""}`} onClick={()=>setUploaded(u=>({...u,[doc.id]:!u[doc.id]}))}><div className="upload-icon-box">{uploaded[doc.id]?"✅":"📎"}</div><div className="upload-info"><div className="upload-name">{doc.name}</div><div className="upload-hint">{doc.hint}</div></div><div className="upload-status">{uploaded[doc.id]?<span className="badge badge-green">Uploaded</span>:<span className="badge badge-grey">Required</span>}</div></div>))}<div className="text-muted mt-8" style={{fontSize:10}}>Click to mark uploaded (demo). PDF, JPG, PNG · Max 10MB.</div><div className="flex gap-8 mt-16"><button className="btn btn-ghost" onClick={()=>setStep(3)}>← Back</button><button className="btn btn-primary" onClick={()=>setStep(5)}>{allUploaded?"Review & Submit →":"Continue with Partial Upload →"}</button></div></div>)}{step===5&&(<div className="card anim-3" style={{padding:28}}><div className="alert alert-success mb-16">✓ Submission complete. The admin team will review your documentation shortly.</div><div className="section-label">Submission Summary</div><div className="card-grid">{[["Entity Type",entityType],["Jurisdiction",JURISDICTIONS.find(j=>j.id===jurisdiction)?.label],["Fund Selected",FUNDS.find(f=>f.id===fundSel)?.name||"—"],["Documents",`${Object.values(uploaded).filter(Boolean).length} / ${requiredDocs.length} uploaded`],["Status","Pending Review"]].map(([k,v])=>(<div className="card" key={k} style={{padding:16}}><div className="card-eyebrow">{k}</div><div style={{fontSize:13,color:"var(--ink)",marginTop:4,fontWeight:500}}>{v}</div></div>))}</div><button className="btn btn-ghost mt-16" onClick={()=>{setStep(0);setEntityType(null);setJurisdiction(null);setUploaded({});setFundSel(null);}}>Start New Submission</button></div>)}</>);}
-function FundManagerPortal(){const [s,setS]=useState("overview");const nav=[{id:"overview",label:"Overview"},{id:"investor_docs",label:"Investor KYC / AML"},{id:"fund_docs",label:"Fund Documents"}];return(<div className="shell"><div className="sidebar"><div className="sb-section"><div className="sb-label">Fund Manager</div>{nav.map(n=><button key={n.id} className={`sb-btn ${s===n.id?"active":""}`} onClick={()=>setS(n.id)}>{n.label}</button>)}</div></div><div className="main">{s==="overview"&&<FMOverview setS={setS}/>}{s==="investor_docs"&&<FMInvestorDocs/>}{s==="fund_docs"&&<FMFundDocs/>}</div></div>);}
-function FMOverview({setS}){const pending=ALL_INVESTOR_DOCS.filter(d=>d.status==="Pending").length;const flagged=ALL_INVESTOR_DOCS.filter(d=>d.status==="Flagged").length;return(<><div className="ph anim-1"><div className="ph-title">Fund Manager Overview</div><div className="ph-sub">Across your managed funds</div></div><div className="card-grid anim-2"><StatCard label="Managed Funds" value={FUNDS.length} accent="card-accent-gold"/><StatCard label="Investor Docs" value={ALL_INVESTOR_DOCS.length} accent="card-accent-blue"/><StatCard label="Pending Review" value={pending} accent={pending?"card-accent-gold":""} color={pending?"var(--amber)":undefined}/><StatCard label="Flagged" value={flagged} accent={flagged?"card-accent-red":""} color={flagged?"var(--red)":undefined}/></div>{flagged>0&&<div className="alert alert-warn anim-3">⚠ {flagged} document(s) flagged for review.<button className="btn btn-ghost btn-sm" style={{marginLeft:12}} onClick={()=>setS("investor_docs")}>Review →</button></div>}<div className="section-label anim-3">Fund Overview</div><div className="activity-grid anim-4">{FUNDS.map(f=>(<ActivityCard key={f.id} icon="📈" title={f.name} meta={`Vintage ${f.vintage} · ${f.aum} AUM · ${f.investors} investors`} badge={f.status} badgeClass={badgeClass(f.status)} actions={<button className="btn btn-ghost btn-sm">View</button>}/>))}</div></>);}
-function FMInvestorDocs(){const [fund,setFund]=useState("All");const funds=["All",...new Set(ALL_INVESTOR_DOCS.map(d=>d.fund))];const filtered=fund==="All"?ALL_INVESTOR_DOCS:ALL_INVESTOR_DOCS.filter(d=>d.fund===fund);return(<><div className="ph anim-1"><div className="ph-title">Investor KYC / AML</div><div className="ph-sub">All investor-submitted documentation</div></div><div className="tabs anim-2">{funds.map(f=><button key={f} className={`tab ${fund===f?"active":""}`} onClick={()=>setFund(f)}>{f}</button>)}</div><div className="activity-grid anim-3">{filtered.map(d=>(<ActivityCard key={d.id} icon="🔐" title={`${d.doc} – ${d.investor}`} meta={`${d.fund} · ${d.date}`} badge={d.status} badgeClass={badgeClass(d.status)} actions={<button className="btn btn-ghost btn-sm">View</button>}/>))}</div></>);}
-function FMFundDocs(){return(<><div className="ph anim-1"><div className="ph-title">Fund Documents</div><div className="ph-sub">Documents published to you by the admin firm</div></div><div className="activity-grid anim-2">{FM_DOCS.map(d=>(<ActivityCard key={d.id} icon="📄" title={d.name} meta={`${d.type} · Published ${d.date}`} badge={d.status} badgeClass={badgeClass(d.status)} actions={<button className="btn btn-ghost btn-sm">Download</button>}/>))}</div></>);}
-function AdminPortal(){const [s,setS]=useState("overview");const nav=[{id:"overview",label:"Overview"},{id:"investors",label:"Investor Register"},{id:"kyc",label:"KYC / AML Docs"},{id:"fund_docs",label:"Fund Manager Docs"},{id:"emails",label:"Email Templates"},{id:"audit",label:"Audit Trail"}];return(<div className="shell"><div className="sidebar"><div className="sb-section"><div className="sb-label">Admin Firm</div>{nav.map(n=><button key={n.id} className={`sb-btn ${s===n.id?"active":""}`} onClick={()=>setS(n.id)}>{n.label}</button>)}</div></div><div className="main">{s==="overview"&&<AdminOverview setS={setS}/>}{s==="investors"&&<AdminInvestors/>}{s==="kyc"&&<AdminKYC/>}{s==="fund_docs"&&<AdminFundDocs/>}{s==="emails"&&<AdminEmails/>}{s==="audit"&&<AdminAudit/>}</div></div>);}
-function AdminOverview({setS}){return(<><div className="ph anim-1"><div className="ph-title">Admin Overview</div><div className="ph-sub">Full platform visibility</div></div><div className="card-grid anim-2"><StatCard label="Total Investors" value="3" accent="card-accent-gold"/><StatCard label="Active Funds" value={FUNDS.length} accent="card-accent-blue"/><StatCard label="Docs Submitted" value={ALL_INVESTOR_DOCS.length} accent="card-accent-green"/><StatCard label="Pending Actions" value="2" accent="card-accent-gold" color="var(--amber)"/></div><div className="alert alert-warn anim-3">⚠ 2 investors have pending KYC · 1 document flagged for review</div><div className="card-grid-2 anim-4"><div className="card card-clickable" onClick={()=>setS("kyc")} style={{padding:22}}><div className="card-icon" style={{background:"var(--blue-bg)",borderColor:"rgba(30,58,95,0.15)"}}>🔐</div><div className="card-title">Review KYC / AML</div><div className="card-body">2 documents awaiting verification. 1 flagged for attention.</div><div className="card-footer"><span className="text-muted">View all →</span><span className="badge badge-gold">2 Pending</span></div></div><div className="card card-clickable" onClick={()=>setS("emails")} style={{padding:22}}><div className="card-icon" style={{background:"var(--gold-muted)",borderColor:"var(--gold-border)"}}>✉️</div><div className="card-title">Email Templates</div><div className="card-body">{EMAIL_TEMPLATES.length} templates available. Send dynamic investor communications.</div><div className="card-footer"><span className="text-muted">Manage →</span><span className="badge badge-grey">{EMAIL_TEMPLATES.length} Templates</span></div></div><div className="card card-clickable" onClick={()=>setS("fund_docs")} style={{padding:22}}><div className="card-icon" style={{background:"var(--green-bg)",borderColor:"rgba(21,98,58,0.15)"}}>📄</div><div className="card-title">Fund Manager Docs</div><div className="card-body">Push documents and reports to fund managers via the portal.</div><div className="card-footer"><span className="text-muted">Push document →</span><span className="badge badge-green">{FM_DOCS.length} Published</span></div></div><div className="card card-clickable" onClick={()=>setS("audit")} style={{padding:22}}><div className="card-icon" style={{background:"var(--paper-mid)",borderColor:"var(--paper-dark)"}}>📋</div><div className="card-title">Audit Trail</div><div className="card-body">Full change log. Every action tracked with before/after detail.</div><div className="card-footer"><span className="text-muted">View log →</span><span className="badge badge-grey">{AUDIT_LOG.length} Events</span></div></div></div></>);}
-function AdminInvestors(){const investors=[{name:"James Harrington",email:"investor@demo.com",fund:"Apex Capital III",commitment:"€2.5M",status:"KYC Complete"},{name:"Emma Walsh",email:"emma@demo.com",fund:"Meridian Growth II",commitment:"€1.2M",status:"KYC Pending"},{name:"David Park",email:"david@demo.com",fund:"Harborview PE V",commitment:"€3.0M",status:"KYC Flagged"}];return(<><div className="ph anim-1"><div className="ph-title">Investor Register</div><div className="ph-sub">All investors across all funds</div></div><div className="activity-grid anim-2">{investors.map((inv,i)=>(<ActivityCard key={i} icon="👤" title={inv.name} meta={`${inv.email} · ${inv.fund} · Commitment: ${inv.commitment}`} badge={inv.status} badgeClass={inv.status==="KYC Complete"?"badge-green":inv.status==="KYC Flagged"?"badge-red":"badge-gold"} actions={<button className="btn btn-ghost btn-sm">View</button>}/>))}</div></>);}
-function AdminKYC(){return(<><div className="ph anim-1"><div className="ph-title">KYC / AML Documentation</div><div className="ph-sub">All investor-submitted documents across all funds</div></div><div className="activity-grid anim-2">{ALL_INVESTOR_DOCS.map(d=>(<ActivityCard key={d.id} icon="🔐" title={`${d.doc} – ${d.investor}`} meta={`${d.fund} · ${d.date}`} badge={d.status} badgeClass={badgeClass(d.status)} actions={<div className="flex gap-8"><button className="btn btn-ghost btn-sm">View</button>{d.status==="Pending"&&<button className="btn btn-success btn-sm">Verify</button>}{d.status==="Flagged"&&<button className="btn btn-danger btn-sm">Review</button>}</div>}/>))}</div></>);}
-function AdminFundDocs(){const [showForm,setShowForm]=useState(false);return(<><div className="ph-row anim-1"><div className="ph"><div className="ph-title">Fund Manager Documents</div><div className="ph-sub">Documents published to fund managers</div></div><button className="btn btn-primary" onClick={()=>setShowForm(!showForm)}>+ Push Document</button></div>{showForm&&(<div className="card anim-2" style={{border:"1px solid var(--gold-border)",padding:24,marginBottom:20}}><div className="section-label">Push New Document to Fund Manager</div><div className="form-grid"><div><label className="f-label">Fund</label><select className="f-input f-select">{FUNDS.map(f=><option key={f.id}>{f.name}</option>)}</select></div><div><label className="f-label">Document Type</label><select className="f-input f-select"><option>Fund Report</option><option>Compliance</option><option>Advisory</option><option>Other</option></select></div></div><div className="form-full"><label className="f-label">Document Name</label><input className="f-input" placeholder="e.g. Q1 2025 Fund Report – Apex Capital III"/></div><div className="upload-card" style={{marginBottom:16}}><div className="upload-icon-box">📎</div><div className="upload-info"><div className="upload-name">Attach Document</div><div className="upload-hint">PDF · Max 25MB</div></div></div><div className="flex gap-8"><button className="btn btn-primary">Publish to Portal</button><button className="btn btn-ghost" onClick={()=>setShowForm(false)}>Cancel</button></div></div>)}<div className="activity-grid anim-3">{FM_DOCS.map(d=>(<ActivityCard key={d.id} icon="📄" title={d.name} meta={`${d.type} · Published ${d.date}`} badge={d.status} badgeClass={badgeClass(d.status)} actions={<div className="flex gap-8"><button className="btn btn-ghost btn-sm">View</button><button className="btn btn-danger btn-sm">Unpublish</button></div>}/>))}</div></>);}
-function AdminEmails(){const [selected,setSelected]=useState(EMAIL_TEMPLATES[0]);const [tab,setTab]=useState("compose");const [toInvestor,setToInvestor]=useState("");const [note,setNote]=useState("");const investors=["James Harrington – Apex Capital III","Emma Walsh – Meridian Growth II","David Park – Harborview PE V","All Investors – Apex Capital III"];return(<><div className="ph anim-1"><div className="ph-title">Email Templates</div><div className="ph-sub">Define, customise and send investor communications</div></div><div className="card-grid-2 anim-2" style={{alignItems:"start"}}><div><div className="section-label">Templates</div><div className="template-list">{EMAIL_TEMPLATES.map(t=>(<div key={t.id} className={`tpl-card ${selected.id===t.id?"active":""}`} onClick={()=>setSelected(t)}><div className="tpl-name">{t.name}</div><div className="tpl-trigger">{t.trigger}</div></div>))}</div></div><div><div className="tabs"><button className={`tab ${tab==="compose"?"active":""}`} onClick={()=>setTab("compose")}>Compose</button><button className={`tab ${tab==="preview"?"active":""}`} onClick={()=>setTab("preview")}>Investor Preview</button></div>{tab==="compose"&&(<div className="card" style={{padding:22}}><div className="form-full"><label className="f-label">Send To</label><select className="f-input f-select" value={toInvestor} onChange={e=>setToInvestor(e.target.value)}><option value="">Select investor or group…</option>{investors.map(i=><option key={i}>{i}</option>)}</select></div><div className="form-full"><label className="f-label">Subject</label><input className="f-input" defaultValue={selected.subject}/></div><div className="form-full"><label className="f-label">Email Body</label><textarea className="f-input f-textarea" defaultValue={selected.body}/></div><div className="form-full"><label className="f-label">Investor Actions Available</label><div className="flex gap-8 mt-8" style={{flexWrap:"wrap"}}>{selected.actions.map(a=><span key={a} className="badge badge-blue">{a}</span>)}</div></div><div className="form-full"><label className="f-label">Additional Note (optional)</label><textarea className="f-input" style={{minHeight:60}} placeholder="Add a personalised note…" value={note} onChange={e=>setNote(e.target.value)}/></div><div className="flex gap-8"><button className="btn btn-primary">Send Email →</button><button className="btn btn-ghost">Save Draft</button></div></div>)}{tab==="preview"&&(<div><div className="email-preview"><div className="email-preview-subject">{selected.subject}</div><p style={{marginBottom:12}}>Dear James Harrington,</p><p style={{marginBottom:14,lineHeight:1.7}}>{selected.body}</p>{note&&<p style={{marginBottom:14,fontStyle:"italic",color:"var(--ink-muted)",borderLeft:"2px solid var(--gold-border)",paddingLeft:12}}>{note}</p>}<div className="email-action-row"><div className="email-action-label">Select an action:</div>{selected.actions.map((a,i)=>(<span key={a} className={`ea-btn ${i===0?"ea-confirm":"ea-update"}`}>{a}</span>))}</div></div><div className="alert alert-info mt-16">When an investor selects an action, they are taken securely into their portal. Every change is recorded in the Audit Trail.</div></div>)}</div></div></>);}
-function AdminAudit(){return(<><div className="ph anim-1"><div className="ph-title">Audit Trail</div><div className="ph-sub">Every action, change and event — fully logged</div></div><div className="alert alert-info anim-2">All investor actions, admin events, and document changes are captured here with full before/after detail and timestamps.</div><div className="card anim-3" style={{padding:24}}><div className="audit-list">{AUDIT_LOG.map(a=>(<div className="audit-item" key={a.id}><div className="audit-line"><div className="audit-dot" style={{background:a.color||"var(--gold)"}}/></div><div className="audit-content"><div className="audit-meta">{a.date} · <strong>{a.user}</strong> · <span className={`badge ${a.role==="admin"?"badge-blue":a.role==="investor"?"badge-gold":"badge-grey"}`}>{a.role}</span></div><div className="audit-action">{a.action} — <em style={{color:"var(--ink-muted)",fontSize:11}}>{a.field}</em></div>{a.from&&<div className="audit-diff">From: <strong>{a.from}</strong> → To: <strong>{a.to}</strong></div>}{!a.from&&a.to&&<div className="audit-diff">Value: <strong>{a.to}</strong></div>}</div></div>))}</div></div></>);}
-function App(){const [role,setRole]=useState(null);const [user,setUser]=useState(null);return(<div>{!role&&<Landing onRole={setRole}/>}{role&&!user&&<><Landing onRole={setRole}/><Login role={role} onLogin={setUser} onBack={()=>setRole(null)}/></>}{user&&(<div><Nav user={user} onLogout={()=>{setUser(null);setRole(null)}}/>{user.role==="investor"&&<InvestorPortal user={user}/>}{user.role==="fund_manager"&&<FundManagerPortal/>}{user.role==="admin"&&<AdminPortal/>}</div>)}</div>);}
+const {useState,useEffect}=React;
+
+/* ── DEMO USERS ── */
+const USERS={
+  "investor@demo.com":{password:"demo",role:"investor",name:"Alexandra Chen"},
+  "manager@demo.com":{password:"demo",role:"fund_manager",name:"James Harrington",status:"live"},
+  "manager.pending@demo.com":{password:"demo",role:"fund_manager",name:"Sarah O'Brien",status:"pending"},
+  "admin@demo.com":{password:"demo",role:"admin",name:"Admin — eoghar"}
+};
+
+const INVITE_CODES=["EOGHAR-2026-INV","DEMO-FUND-001"];
+
+/* ── JURISDICTIONS ── */
+const JURISDICTION_OPTIONS=["Ireland","Luxembourg","Cayman Islands","British Virgin Islands","Malta","United States","United Kingdom","Singapore","Jersey","Guernsey","Netherlands","Germany","France","UAE"];
+const REPORTING_REQUIREMENTS={
+  "Ireland":["AIFMD Reporting","Central Bank of Ireland Returns","Annual Audited Accounts","FATCA / CRS","Form 12 (Corporation Tax)"],
+  "Luxembourg":["CSSF Regulatory Reports","AIFMD Annex IV","Annual Report (RCSL)","FATCA / CRS","VAT Returns"],
+  "Cayman Islands":["CIMA Returns","FATCA / CRS","Annual Return (CIMA)","AML Compliance Report"],
+  "British Virgin Islands":["FSC Annual Return","FATCA / CRS","AML / CFT Report","Economic Substance Returns"],
+  "Malta":["MFSA Quarterly Reports","AIFMD Reporting","Annual Audited Accounts","FATCA / CRS"],
+  "United States":["SEC Form ADV","Form PF","FATCA Returns","Annual Audited Accounts","K-1 Distribution"],
+  "United Kingdom":["FCA Regulatory Returns","AIFMD Reporting","HMRC FATCA/CRS","Annual Report & Accounts"],
+  "Singapore":["MAS Returns","Annual Report","FATCA / CRS","Form C (Tax)"],
+  "Jersey":["JFSC Returns","Annual Accounts","FATCA / CRS","Economic Substance"],
+  "Guernsey":["GFSC Returns","Annual Accounts","FATCA / CRS","Economic Substance"],
+  "Netherlands":["AFM Reporting","AIFMD Annex IV","Annual Accounts","FATCA / CRS"],
+  "Germany":["BaFin Reporting","AIFMD Annex IV","Annual Accounts","FATCA / CRS"],
+  "France":["AMF Reporting","AIFMD Annex IV","Annual Accounts","FATCA / CRS"],
+  "UAE":["ADGM/DFSA Returns","FATCA / CRS","Annual Accounts","AML Report"]
+};
+
+function Landing({onRole}){
+  return(
+    <div className="landing">
+      <div className="landing-grain"/>
+      <div className="landing-glow"/>
+      <div className="landing-eyebrow anim-1">Investor Services Platform</div>
+      <h1 className="landing-title anim-2">Secure access to<br/><em>your</em> portal</h1>
+      <p className="landing-sub anim-3">Select your role to continue</p>
+      <div className="role-grid anim-4">
+        {[
+          {role:"investor",icon:"👤",title:"Investor",desc:"Funds · Documents · Onboarding"},
+          {role:"fund_manager",icon:"📊",title:"Fund Manager",desc:"KYC/AML Docs · Fund Materials · CRM"},
+          {role:"admin",icon:"🏛️",title:"Admin Firm",desc:"Super User · Approvals · Oversight"},
+        ].map(r=>(
+          <div className="role-card" key={r.role} onClick={()=>onRole(r.role)}>
+            <div className="role-card-icon">{r.icon}</div>
+            <div className="role-card-title">{r.title}</div>
+            <div className="role-card-desc">{r.desc}</div>
+            <div className="role-card-arrow">→</div>
+          </div>
+        ))}
+      </div>
+      <div className="landing-mark anim-5">Confidential · Authorised Access Only</div>
+    </div>
+  );
+}
+
+function Login({role,onLogin,onBack,onSetupAccess}){
+  const [email,setEmail]=useState("");
+  const [pass,setPass]=useState("");
+  const [err,setErr]=useState("");
+  const hints={
+    investor:"investor@demo.com / demo",
+    fund_manager:"manager@demo.com / demo  (or manager.pending@demo.com for Pending state)",
+    admin:"admin@demo.com / demo"
+  };
+  const labels={investor:"Investor Portal",fund_manager:"Fund Manager Portal",admin:"Admin Portal"};
+  const attempt=()=>{
+    const u=USERS[email.trim().toLowerCase()];
+    if(u&&u.role===role&&u.password===pass) onLogin({...u,email});
+    else setErr("Invalid credentials. Please check and try again.");
+  };
+  return(
+    <div className="login-wrap">
+      <div className="login-box anim-1">
+        <div className="login-back" onClick={onBack}>← Back</div>
+        <div className="login-eyebrow">{labels[role]}</div>
+        <div className="login-title">Welcome back</div>
+        <div className="form-group">
+          <label className="form-label">Email address</label>
+          <input className={`form-input${err?" error-input":""}`} type="email" value={email} onChange={e=>{setEmail(e.target.value);setErr("")}} placeholder="your@email.com" onKeyDown={e=>e.key==="Enter"&&attempt()}/>
+        </div>
+        <div className="form-group">
+          <label className="form-label">Password</label>
+          <input className={`form-input${err?" error-input":""}`} type="password" value={pass} onChange={e=>{setPass(e.target.value);setErr("")}} placeholder="••••••••" onKeyDown={e=>e.key==="Enter"&&attempt()}/>
+        </div>
+        {err&&<div className="form-error">{err}</div>}
+        <div className="form-hint">Demo: {hints[role]}</div>
+        <div style={{marginTop:20}}>
+          <button className="btn btn-primary btn-full" onClick={attempt}>Sign In →</button>
+        </div>
+        {role==="fund_manager"&&(
+          <div className="setup-link">
+            <div className="setup-link-label">New Fund Manager?</div>
+            <span className="setup-link-btn" onClick={onSetupAccess}>Set up your access →</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function InviteGate({onValidCode,onBack}){
+  const [code,setCode]=useState("");
+  const [err,setErr]=useState("");
+  const validate=()=>{
+    if(INVITE_CODES.includes(code.trim().toUpperCase())){onValidCode(code.trim().toUpperCase())}
+    else setErr("Invalid or expired invitation code. Please contact your administrator.");
+  };
+  return(
+    <div className="invite-wrap">
+      <div className="invite-box anim-1">
+        <div className="login-back" onClick={onBack}>← Back</div>
+        <div className="invite-icon">✉️</div>
+        <div className="invite-title">Enter your invitation code</div>
+        <div className="invite-sub">Access to this platform is by invitation only. Your administrator will have sent you a unique invitation code by email. Enter it below to begin setting up your fund manager account.</div>
+        <div className="form-group">
+          <label className="form-label">Invitation Code</label>
+          <input className={`form-input${err?" error-input":""}`} value={code} onChange={e=>{setCode(e.target.value);setErr("")}} placeholder="e.g. EOGHAR-2026-INV" style={{textTransform:"uppercase",letterSpacing:"0.1em"}} onKeyDown={e=>e.key==="Enter"&&validate()}/>
+        </div>
+        {err&&<div className="form-error">{err}</div>}
+        <button className="btn btn-primary btn-full" style={{marginTop:4}} onClick={validate}>Verify Code →</button>
+        <div className="invite-note">Demo code: <strong>EOGHAR-2026-INV</strong><br/>No invitation? Contact <strong>admin@eoghar.dev</strong> to request access.</div>
+      </div>
+    </div>
+  );
+}
+
+function FundOnboardingForm({inviteCode,onSubmit,onBack}){
+  const [step,setStep]=useState(0);
+  const [files,setFiles]=useState([]);
+  const [aiProcessing,setAiProcessing]=useState(false);
+  const [aiDone,setAiDone]=useState(false);
+  const [jurisdictions,setJurisdictions]=useState([]);
+  const [addingJ,setAddingJ]=useState("");
+  const [reportingReqs,setReportingReqs]=useState({});
+  const [form,setForm]=useState({
+    fundName:"",legalName:"",fundType:"",structure:"",inceptionDate:"",aum:"",currency:"EUR",
+    domicile:"",regulatoryStatus:"",primaryContact:"",email:"",phone:"",
+    legalContact:"",complianceContact:"",fundAdminContact:"",existingAdmin:""
+  });
+  const steps=["Documents","Fund Details","Regulatory Profile","Key Contacts","Review"];
+  const set=(k,v)=>setForm(f=>({...f,[k]:v}));
+  const handleFiles=(e)=>{
+    const newFiles=Array.from(e.target.files).map(f=>({name:f.name,size:f.size,status:"uploaded"}));
+    setFiles(prev=>[...prev,...newFiles]);
+  };
+  const runAIPrefill=()=>{
+    setAiProcessing(true);
+    setTimeout(()=>{
+      setForm(f=>({...f,fundName:"Harrington Capital Partners III",legalName:"Harrington Capital Partners III ICAV",fundType:"Alternative Investment Fund",structure:"ICAV",inceptionDate:"2024-01-15",aum:"250,000,000",currency:"EUR",domicile:"Ireland",regulatoryStatus:"Authorised AIFM"}));
+      setJurisdictions(["Ireland","Cayman Islands","Luxembourg"]);
+      setReportingReqs({"Ireland":["AIFMD Reporting","Central Bank of Ireland Returns","Annual Audited Accounts","FATCA / CRS"],"Cayman Islands":["CIMA Returns","FATCA / CRS","Annual Return (CIMA)"],"Luxembourg":["CSSF Regulatory Reports","AIFMD Annex IV","Annual Report (RCSL)"]});
+      setFiles(prev=>prev.map(f=>({...f,status:"processed"})));
+      setAiProcessing(false);
+      setAiDone(true);
+    },2200);
+  };
+  const addJurisdiction=()=>{
+    if(addingJ&&!jurisdictions.includes(addingJ)){
+      setJurisdictions(j=>[...j,addingJ]);
+      setReportingReqs(r=>({...r,[addingJ]:REPORTING_REQUIREMENTS[addingJ]||[]}));
+      setAddingJ("");
+    }
+  };
+  const removeJurisdiction=(j)=>{
+    setJurisdictions(prev=>prev.filter(x=>x!==j));
+    setReportingReqs(prev=>{const n={...prev};delete n[j];return n;});
+  };
+  const toggleReq=(j,req)=>{
+    setReportingReqs(prev=>({...prev,[j]:prev[j].includes(req)?prev[j].filter(r=>r!==req):[...(prev[j]||[]),req]}));
+  };
+  return(
+    <div className="onboard-wrap">
+      <div className="onboard-inner">
+        <div className="onboard-header anim-1">
+          <div className="onboard-eyebrow">Fund Manager Onboarding · Invite: {inviteCode}</div>
+          <div className="onboard-title">Set up your fund</div>
+          <div className="onboard-sub">Complete all sections below. Your account will be reviewed by our team before going live — you'll be notified within 2 business days.</div>
+        </div>
+        <div className="progress-bar">{steps.map((s,i)=><div key={s} className={`progress-step${i===step?" active":i<step?" done":""}`}/>)}</div>
+        <div className="progress-labels">{steps.map((s,i)=><div key={s} className={`progress-label${i===step?" active":""}`}>{s}</div>)}</div>
+
+        {step===0&&(
+          <div className="anim-1">
+            <div className="ai-prefill-banner">
+              <div className="ai-prefill-icon">✨</div>
+              <div className="ai-prefill-text"><strong>AI-powered form completion</strong><br/>Upload your fund establishment documents (PPM, LPA, constitutional docs, regulatory filings) and our AI will automatically read them and pre-fill the onboarding form for you. You can review and correct any details before submitting.</div>
+            </div>
+            <div className="form-card">
+              <div className="form-card-title">Upload Fund Documents</div>
+              <div className="upload-zone">
+                <input type="file" multiple accept=".pdf,.doc,.docx" onChange={handleFiles}/>
+                <div className="upload-zone-icon">📁</div>
+                <div className="upload-zone-title">Drop files here or click to browse</div>
+                <div className="upload-zone-sub">Accepted: PDF, DOC, DOCX · PPM, LPA, Constitutional Docs, Regulatory Filings</div>
+              </div>
+              {files.map((f,i)=>(
+                <div key={i} className="uploaded-file">
+                  <div className="uploaded-file-icon">📄</div>
+                  <div className="uploaded-file-name">{f.name}</div>
+                  <div className="uploaded-file-status">{f.status==="processed"?"✅ Processed":aiProcessing?"⏳ Reading...":"✓ Uploaded"}</div>
+                </div>
+              ))}
+              {files.length>0&&!aiDone&&<button className="btn btn-gold" style={{marginTop:16}} onClick={runAIPrefill} disabled={aiProcessing}>{aiProcessing?"✨ Reading documents...":"✨ Auto-fill form with AI"}</button>}
+              {aiDone&&<div style={{marginTop:12,padding:"10px 14px",background:"var(--green-bg)",borderRadius:"var(--radius)",fontSize:11,color:"var(--green)"}}>✅ Form pre-filled from your documents. Please review each section.</div>}
+            </div>
+            <div className="form-nav">
+              <button className="btn btn-outline" onClick={onBack}>← Back</button>
+              <div style={{display:"flex",alignItems:"center",gap:12}}><span className="step-counter">Step 1 of 5</span><button className="btn btn-primary" onClick={()=>setStep(1)}>Next: Fund Details →</button></div>
+            </div>
+          </div>
+        )}
+
+        {step===1&&(
+          <div className="anim-1">
+            {aiDone&&<div className="ai-prefill-banner"><div className="ai-prefill-icon">✨</div><div className="ai-prefill-text"><strong>AI pre-filled</strong> — Review and correct any details below.</div></div>}
+            <div className="form-card">
+              <div className="form-card-title">Fund Identity</div>
+              <div className="form-row" style={{marginBottom:16}}>
+                <div className="form-group"><label className="form-label">Fund Name</label><input className="form-input" value={form.fundName} onChange={e=>set("fundName",e.target.value)} placeholder="e.g. Apex Capital III"/></div>
+                <div className="form-group"><label className="form-label">Legal Entity Name</label><input className="form-input" value={form.legalName} onChange={e=>set("legalName",e.target.value)} placeholder="Full registered name"/></div>
+              </div>
+              <div className="form-row" style={{marginBottom:16}}>
+                <div className="form-group"><label className="form-label">Fund Type</label>
+                  <select className="form-select" value={form.fundType} onChange={e=>set("fundType",e.target.value)}>
+                    <option value="">Select…</option><option>Alternative Investment Fund</option><option>UCITS</option><option>Venture Capital Fund</option><option>Private Equity Fund</option><option>Real Estate Fund</option><option>Hedge Fund</option>
+                  </select>
+                </div>
+                <div className="form-group"><label className="form-label">Legal Structure</label>
+                  <select className="form-select" value={form.structure} onChange={e=>set("structure",e.target.value)}>
+                    <option value="">Select…</option><option>ICAV</option><option>SICAV</option><option>LP</option><option>LLC</option><option>Unit Trust</option><option>SPC</option><option>PCC</option>
+                  </select>
+                </div>
+              </div>
+              <div className="form-row">
+                <div className="form-group"><label className="form-label">Inception Date</label><input className="form-input" type="date" value={form.inceptionDate} onChange={e=>set("inceptionDate",e.target.value)}/></div>
+                <div className="form-group"><label className="form-label">Domicile</label>
+                  <select className="form-select" value={form.domicile} onChange={e=>set("domicile",e.target.value)}>
+                    <option value="">Select…</option>{JURISDICTION_OPTIONS.map(j=><option key={j}>{j}</option>)}
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="form-card">
+              <div className="form-card-title">Assets Under Management</div>
+              <div className="form-row">
+                <div className="form-group"><label className="form-label">AUM (approx.)</label><input className="form-input" value={form.aum} onChange={e=>set("aum",e.target.value)} placeholder="e.g. 250,000,000"/></div>
+                <div className="form-group"><label className="form-label">Base Currency</label>
+                  <select className="form-select" value={form.currency} onChange={e=>set("currency",e.target.value)}>
+                    <option>EUR</option><option>USD</option><option>GBP</option><option>CHF</option><option>SGD</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="form-nav">
+              <button className="btn btn-outline" onClick={()=>setStep(0)}>← Back</button>
+              <div style={{display:"flex",alignItems:"center",gap:12}}><span className="step-counter">Step 2 of 5</span><button className="btn btn-primary" onClick={()=>setStep(2)}>Next: Regulatory Profile →</button></div>
+            </div>
+          </div>
+        )}
+
+        {step===2&&(
+          <div className="anim-1">
+            <div className="form-card">
+              <div className="form-card-title">Regulatory Status</div>
+              <div className="form-row" style={{marginBottom:16}}>
+                <div className="form-group"><label className="form-label">Regulatory Status</label>
+                  <select className="form-select" value={form.regulatoryStatus} onChange={e=>set("regulatoryStatus",e.target.value)}>
+                    <option value="">Select…</option><option>Authorised AIFM</option><option>Registered AIFM</option><option>UCITS Management Company</option><option>Self-Managed</option><option>Exempt</option>
+                  </select>
+                </div>
+              </div>
+              <div className="form-card-title" style={{marginTop:20}}>Jurisdictions of Registration</div>
+              <div style={{marginBottom:12}}>{jurisdictions.map(j=><span key={j} className="jurisdiction-tag">{j}<button onClick={()=>removeJurisdiction(j)}>×</button></span>)}</div>
+              <div className="jurisdiction-add">
+                <select className="form-select" value={addingJ} onChange={e=>setAddingJ(e.target.value)} style={{flex:1}}>
+                  <option value="">Add jurisdiction…</option>{JURISDICTION_OPTIONS.filter(j=>!jurisdictions.includes(j)).map(j=><option key={j}>{j}</option>)}
+                </select>
+                <button className="btn btn-outline" onClick={addJurisdiction} disabled={!addingJ}>Add</button>
+              </div>
+            </div>
+            {jurisdictions.length>0&&(
+              <div className="form-card">
+                <div className="form-card-title">Reporting Requirements by Jurisdiction</div>
+                <div style={{fontSize:10,color:"var(--ink-muted)",marginBottom:16,lineHeight:1.6}}>Review and confirm the reporting requirements for each jurisdiction. Deselect any that do not apply.</div>
+                {jurisdictions.map(j=>(
+                  <div key={j} className="jurisdiction-reporting">
+                    <div className="jr-header"><div className="jr-flag">📍 {j}</div>{aiDone&&<span className="badge badge-gold" style={{fontSize:8}}>AI extracted</span>}</div>
+                    <div className="jr-body">
+                      {(REPORTING_REQUIREMENTS[j]||[]).map(req=>(
+                        <label key={req} style={{display:"flex",alignItems:"center",gap:10,fontSize:11,color:"var(--ink-mid)",cursor:"pointer",padding:"4px 0"}}>
+                          <input type="checkbox" checked={(reportingReqs[j]||[]).includes(req)} onChange={()=>toggleReq(j,req)} style={{accentColor:"var(--gold)"}}/>{req}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="form-nav">
+              <button className="btn btn-outline" onClick={()=>setStep(1)}>← Back</button>
+              <div style={{display:"flex",alignItems:"center",gap:12}}><span className="step-counter">Step 3 of 5</span><button className="btn btn-primary" onClick={()=>setStep(3)}>Next: Key Contacts →</button></div>
+            </div>
+          </div>
+        )}
+
+        {step===3&&(
+          <div className="anim-1">
+            <div className="form-card">
+              <div className="form-card-title">Primary Contact</div>
+              <div className="form-row" style={{marginBottom:16}}>
+                <div className="form-group"><label className="form-label">Full Name</label><input className="form-input" value={form.primaryContact} onChange={e=>set("primaryContact",e.target.value)} placeholder="Name of primary contact"/></div>
+                <div className="form-group"><label className="form-label">Email Address</label><input className="form-input" type="email" value={form.email} onChange={e=>set("email",e.target.value)} placeholder="contact@fund.com"/></div>
+              </div>
+              <div className="form-group"><label className="form-label">Phone Number</label><input className="form-input" value={form.phone} onChange={e=>set("phone",e.target.value)} placeholder="+353 ..."/></div>
+            </div>
+            <div className="form-card">
+              <div className="form-card-title">Additional Contacts</div>
+              <div className="form-row" style={{marginBottom:16}}>
+                <div className="form-group"><label className="form-label">Legal / Counsel Contact</label><input className="form-input" value={form.legalContact} onChange={e=>set("legalContact",e.target.value)} placeholder="Legal contact name & firm"/></div>
+                <div className="form-group"><label className="form-label">Compliance Contact</label><input className="form-input" value={form.complianceContact} onChange={e=>set("complianceContact",e.target.value)} placeholder="Compliance officer name"/></div>
+              </div>
+              <div className="form-row">
+                <div className="form-group"><label className="form-label">Existing Fund Administrator (if any)</label><input className="form-input" value={form.existingAdmin} onChange={e=>set("existingAdmin",e.target.value)} placeholder="Name of current administrator"/></div>
+                <div className="form-group"><label className="form-label">Fund Admin Contact</label><input className="form-input" value={form.fundAdminContact} onChange={e=>set("fundAdminContact",e.target.value)} placeholder="Their contact name"/></div>
+              </div>
+            </div>
+            <div className="form-nav">
+              <button className="btn btn-outline" onClick={()=>setStep(2)}>← Back</button>
+              <div style={{display:"flex",alignItems:"center",gap:12}}><span className="step-counter">Step 4 of 5</span><button className="btn btn-primary" onClick={()=>setStep(4)}>Next: Review →</button></div>
+            </div>
+          </div>
+        )}
+
+        {step===4&&(
+          <div className="anim-1">
+            <div className="form-card">
+              <div className="form-card-title">Review: Fund Details</div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px 24px",fontSize:11}}>
+                {[["Fund Name",form.fundName||"—"],["Legal Name",form.legalName||"—"],["Fund Type",form.fundType||"—"],["Structure",form.structure||"—"],["Domicile",form.domicile||"—"],["AUM",`${form.currency} ${form.aum||"—"}`],["Regulatory Status",form.regulatoryStatus||"—"],["Inception",form.inceptionDate||"—"]].map(([k,v])=>(
+                  <div key={k}><div style={{fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:"var(--ink-muted)",marginBottom:3}}>{k}</div><div style={{color:"var(--ink)"}}>{v}</div></div>
+                ))}
+              </div>
+            </div>
+            <div className="form-card">
+              <div className="form-card-title">Review: Regulatory Profile</div>
+              {jurisdictions.length===0?<div style={{fontSize:11,color:"var(--ink-muted)"}}>No jurisdictions added.</div>:jurisdictions.map(j=>(
+                <div key={j} style={{marginBottom:14}}>
+                  <div style={{fontSize:11,fontWeight:600,marginBottom:6}}>📍 {j}</div>
+                  <div style={{display:"flex",flexWrap:"wrap",gap:4}}>{(reportingReqs[j]||[]).map(r=><span key={r} className="tag">{r}</span>)}</div>
+                </div>
+              ))}
+            </div>
+            <div className="form-card">
+              <div className="form-card-title">Review: Key Contacts</div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px 24px",fontSize:11}}>
+                {[["Primary Contact",form.primaryContact||"—"],["Email",form.email||"—"],["Phone",form.phone||"—"],["Legal Contact",form.legalContact||"—"],["Compliance",form.complianceContact||"—"],["Existing Admin",form.existingAdmin||"—"]].map(([k,v])=>(
+                  <div key={k}><div style={{fontSize:9,letterSpacing:"0.1em",textTransform:"uppercase",color:"var(--ink-muted)",marginBottom:3}}>{k}</div><div>{v}</div></div>
+                ))}
+              </div>
+            </div>
+            <div style={{background:"var(--amber-bg)",border:"1px solid rgba(146,64,14,0.15)",borderRadius:"var(--radius)",padding:"16px 20px",fontSize:11,color:"var(--amber)",lineHeight:1.7,marginBottom:20}}>
+              ⚠️ Once submitted, your account will be placed in <strong>Pending</strong> status. Our team will review your submission and complete the new client onboarding checklist. You will be notified when your account is approved and goes <strong>Live</strong>.
+            </div>
+            <div className="form-nav">
+              <button className="btn btn-outline" onClick={()=>setStep(3)}>← Back</button>
+              <div style={{display:"flex",alignItems:"center",gap:12}}><span className="step-counter">Step 5 of 5</span><button className="btn btn-gold" onClick={onSubmit}>Submit Application →</button></div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function PendingScreen({user,onLogout}){
+  const checklist=[
+    {label:"Onboarding form received",done:true},
+    {label:"New client checklist initiated",done:true},
+    {label:"AML/KYC documents requested",done:true},
+    {label:"AML/KYC documents received",done:false},
+    {label:"Documents reviewed by compliance",done:false},
+    {label:"Approval by authorised signatories",done:false},
+    {label:"Account activated — LIVE",done:false},
+  ];
+  return(
+    <div className="pending-wrap">
+      <div className="pending-box anim-1">
+        <div className="pending-badge"><div className="pending-dot"/><span>Account Pending</span></div>
+        <div className="pending-title">Your application is under review</div>
+        <div className="pending-sub">Thank you, {user.name}. Your fund onboarding form has been received and our team has been notified. Your account will remain in <strong>Pending</strong> status until all requirements have been completed and approved by the appropriate signatories.</div>
+        <div className="checklist">
+          <div className="checklist-title">Onboarding Checklist</div>
+          {checklist.map((c,i)=>(
+            <div key={i} className={`checklist-item${c.done?" done":" pending-item"}`}>
+              <div className="checklist-icon">{c.done?"✅":"⏳"}</div>{c.label}
+            </div>
+          ))}
+        </div>
+        <div style={{fontSize:11,color:"var(--ink-muted)",lineHeight:1.7,marginBottom:20}}>You will receive an email notification when your account has been approved. Expected review time: <strong>2–3 business days</strong>.</div>
+        <button className="btn btn-outline btn-full" onClick={onLogout}>← Return to Login</button>
+      </div>
+    </div>
+  );
+}
+
+function AdminPortal({user,onLogout}){
+  const [view,setView]=useState("dashboard");
+  const [modal,setModal]=useState(null);
+  const [inviteEmail,setInviteEmail]=useState("");
+  const [inviteSent,setInviteSent]=useState(false);
+  const pendingFunds=[
+    {name:"O'Brien Capital Fund I",manager:"Sarah O'Brien",submitted:"01 May 2026",docs:3,status:"Pending Review"},
+    {name:"Meridian Growth Partners",manager:"Tom Walsh",submitted:"28 Apr 2026",docs:5,status:"Docs Outstanding"},
+  ];
+  const liveFunds=[
+    {name:"Harrington Capital Partners III",manager:"James Harrington",aum:"€250M",investors:12,status:"Live"},
+    {name:"Apex Capital III",manager:"Claire Donnelly",aum:"€180M",investors:8,status:"Live"},
+  ];
+  const approvalQueue=[
+    {type:"Welcome Letter",fund:"Harrington Capital III",investor:"Alexandra Chen",managerApproved:true,adminApproved:false,date:"04 May 2026"},
+    {type:"Welcome Letter",fund:"Apex Capital III",investor:"John Murphy",managerApproved:false,adminApproved:false,date:"03 May 2026"},
+  ];
+  const workflowItems=[
+    {title:"AML/KYC docs outstanding — O'Brien Capital",meta:"Sarah O'Brien · Requested 28 Apr 2026",due:"Overdue",assignee:"Admin Team",type:"overdue"},
+    {title:"Signatory approval required — Meridian Growth",meta:"Tom Walsh · Submitted 30 Apr 2026",due:"Due today",assignee:"Compliance Officer",type:"due-soon"},
+    {title:"Welcome letter pending dual approval",meta:"Harrington Capital · Alexandra Chen",due:"Awaiting approvals",assignee:"Manager + Admin",type:"pending-item"},
+    {title:"Investor onboarding complete — Apex Capital",meta:"John Murphy · Completed 02 May 2026",due:"Done",assignee:"KYC Team",type:"complete"},
+  ];
+  const auditLog=[
+    {time:"04 May 14:23",icon:"📨",text:<span><span className="audit-actor">Admin</span> sent invitation to tom.walsh@meridian.ie</span>},
+    {time:"04 May 11:05",icon:"✅",text:<span><span className="audit-actor">James Harrington</span> approved welcome letter for Alexandra Chen</span>},
+    {time:"03 May 16:42",icon:"📋",text:<span><span className="audit-actor">Sarah O'Brien</span> submitted fund onboarding form — O'Brien Capital Fund I</span>},
+    {time:"03 May 09:11",icon:"🔐",text:<span><span className="audit-actor">Admin</span> activated account for Harrington Capital Partners III → LIVE</span>},
+    {time:"01 May 14:00",icon:"📄",text:<span><span className="audit-actor">System</span> generated new client checklist for O'Brien Capital Fund I</span>},
+  ];
+  const sendInvite=()=>{if(inviteEmail){setInviteSent(true);}};
+  const navItems=[
+    {id:"dashboard",icon:"◈",label:"Dashboard"},{id:"pending",icon:"⏳",label:"Pending Funds"},
+    {id:"live",icon:"✓",label:"Live Funds"},{id:"approvals",icon:"📋",label:"Approval Queue"},
+    {id:"workflow",icon:"⚡",label:"Workflow"},{id:"invite",icon:"✉️",label:"Send Invitation"},
+    {id:"audit",icon:"🔍",label:"Audit Trail"},
+  ];
+  return(
+    <div className="app">
+      <div className="sidebar">
+        <div className="sidebar-brand"><div className="sidebar-brand-name">eoghar</div><div className="sidebar-brand-sub">Admin Portal</div></div>
+        <div className="sidebar-user"><div className="sidebar-user-name">{user.name}</div><div className="sidebar-user-role">Super Admin</div></div>
+        <div className="nav-section"><div className="nav-label">Navigation</div>
+          {navItems.map(n=><div key={n.id} className={`nav-item${view===n.id?" active":""}`} onClick={()=>setView(n.id)}><span className="nav-item-icon">{n.icon}</span>{n.label}</div>)}
+        </div>
+        <div className="sidebar-logout"><span className="logout-btn" onClick={onLogout}>Sign Out</span></div>
+      </div>
+      <div className="main">
+        {view==="dashboard"&&(
+          <><div className="main-header"><div className="page-title">Admin Dashboard</div><div className="page-sub">Platform overview · {new Date().toLocaleDateString("en-IE",{weekday:"long",year:"numeric",month:"long",day:"numeric"})}</div></div>
+          <div className="main-body">
+            <div className="stat-grid">{[["Live Funds","2","All operational"],["Pending Funds","2","Awaiting approval"],["Active Investors","20","Across all funds"],["Approval Queue","2","Require action"]].map(([l,v,s])=><div key={l} className="stat-card"><div className="stat-label">{l}</div><div className="stat-value">{v}</div><div className="stat-sub">{s}</div></div>)}</div>
+            <div className="section-title">Workflow — Action Required</div>
+            {workflowItems.filter(w=>w.type!=="complete").map((w,i)=>(
+              <div key={i} className={`workflow-item ${w.type}`}>
+                <div className={`workflow-dot dot-${w.type==="overdue"?"red":w.type==="due-soon"?"gold":"pending"}`}/>
+                <div className="workflow-info"><div className="workflow-title">{w.title}</div><div className="workflow-meta">{w.meta}</div></div>
+                <div className="workflow-right"><div className="workflow-due">{w.due}</div><div className="workflow-assignee">{w.assignee}</div></div>
+              </div>
+            ))}
+          </div></>
+        )}
+        {view==="pending"&&(
+          <><div className="main-header"><div className="page-title">Pending Fund Accounts</div><div className="page-sub">Funds awaiting onboarding completion and approval</div></div>
+          <div className="main-body">
+            {pendingFunds.map((f,i)=>(
+              <div key={i} className="approval-card">
+                <div className="approval-header"><div className="approval-info"><div className="approval-title">{f.name}</div><div className="approval-meta">Manager: {f.manager} · Submitted: {f.submitted} · {f.docs} docs uploaded</div></div><span className={`badge ${f.status==="Pending Review"?"badge-gold":"badge-red"}`}>{f.status}</span></div>
+                <div className="checklist" style={{margin:"12px 0"}}><div className="checklist-title">Onboarding Checklist</div>
+                  {[["Onboarding form received",true],["AML/KYC docs requested",true],["AML/KYC docs received",f.status!=="Docs Outstanding"],["Compliance review",false],["Signatory approval",false]].map(([l,d],j)=>(
+                    <div key={j} className={`checklist-item${d?" done":" pending-item"}`}><div className="checklist-icon">{d?"✅":"⏳"}</div>{l}</div>
+                  ))}
+                </div>
+                <div className="approval-actions"><button className="btn btn-sm btn-outline">Request Docs</button><button className="btn btn-sm btn-gold" onClick={()=>setModal({type:"approve_fund",fund:f})}>Approve & Activate →</button></div>
+              </div>
+            ))}
+          </div></>
+        )}
+        {view==="live"&&(
+          <><div className="main-header"><div className="page-title">Live Funds</div><div className="page-sub">Active fund accounts — investor engagement enabled</div></div>
+          <div className="main-body"><div className="table-wrap">
+            <div className="table-header" style={{gridTemplateColumns:"2fr 1.5fr 1fr 1fr 1fr"}}><span>Fund</span><span>Manager</span><span>AUM</span><span>Investors</span><span>Status</span></div>
+            {liveFunds.map((f,i)=><div key={i} className="table-row" style={{gridTemplateColumns:"2fr 1.5fr 1fr 1fr 1fr"}}><span style={{fontWeight:500}}>{f.name}</span><span style={{color:"var(--ink-muted)"}}>{f.manager}</span><span>{f.aum}</span><span>{f.investors}</span><span><span className="badge badge-green">{f.status}</span></span></div>)}
+          </div></div></>
+        )}
+        {view==="approvals"&&(
+          <><div className="main-header"><div className="page-title">Approval Queue</div><div className="page-sub">Dual approval required before any communication reaches an investor</div></div>
+          <div className="main-body">
+            {approvalQueue.map((a,i)=>(
+              <div key={i} className="approval-card">
+                <div className="approval-header"><div className="approval-info"><div className="approval-title">{a.type} — {a.investor}</div><div className="approval-meta">{a.fund} · {a.date}</div></div><span className="badge badge-gold">Pending Approval</span></div>
+                <div className="preview-box"><p>Dear {a.investor},</p><p>We are delighted to welcome you as an investor in <strong>{a.fund}</strong>. This letter confirms your commitment and outlines the next steps in your onboarding journey with us.</p><p>Our team will be in touch shortly to guide you through the AML/KYC documentation requirements. Please do not hesitate to contact us if you have any questions.</p><p>Yours sincerely,<br/><em>{a.fund} — Investment Manager</em></p></div>
+                <div style={{fontSize:10,color:"var(--ink-muted)",marginBottom:10,letterSpacing:"0.08em",textTransform:"uppercase"}}>Signatory Status</div>
+                <div className="approval-signatories">
+                  <div className={`signatory${a.managerApproved?" signed":""}`}><span className="signatory-icon">{a.managerApproved?"✅":"⏳"}</span>Fund Manager</div>
+                  <div className={`signatory${a.adminApproved?" signed":""}`}><span className="signatory-icon">{a.adminApproved?"✅":"⏳"}</span>Admin Firm</div>
+                </div>
+                {!a.adminApproved&&<div className="approval-actions" style={{marginTop:16}}><button className="btn btn-sm btn-outline">Request Changes</button><button className="btn btn-sm btn-gold">Admin Approve & Send →</button></div>}
+              </div>
+            ))}
+          </div></>
+        )}
+        {view==="workflow"&&(
+          <><div className="main-header"><div className="page-title">Workflow Tracker</div><div className="page-sub">All active tasks — due dates, assignees, and status</div></div>
+          <div className="main-body"><div className="section-title">Active Tasks</div>
+            {workflowItems.map((w,i)=>(
+              <div key={i} className={`workflow-item ${w.type}`}>
+                <div className={`workflow-dot dot-${w.type==="overdue"?"red":w.type==="due-soon"?"gold":w.type==="complete"?"green":"pending"}`}/>
+                <div className="workflow-info"><div className="workflow-title">{w.title}</div><div className="workflow-meta">{w.meta}</div></div>
+                <div className="workflow-right"><div className="workflow-due">{w.due}</div><div className="workflow-assignee">{w.assignee}</div></div>
+              </div>
+            ))}
+          </div></>
+        )}
+        {view==="invite"&&(
+          <><div className="main-header"><div className="page-title">Send Invitation</div><div className="page-sub">Gate 0 — Admin must initiate all new fund manager access</div></div>
+          <div className="main-body"><div className="form-card" style={{maxWidth:520}}>
+            <div className="form-card-title">Invite a New Fund Manager</div>
+            <div style={{fontSize:11,color:"var(--ink-muted)",lineHeight:1.7,marginBottom:20}}>No fund manager can self-register. An invitation must be sent by the admin before any setup can begin. The invitation email will include a unique one-time access code, valid for 48 hours.</div>
+            {!inviteSent?(
+              <><div className="form-group"><label className="form-label">Fund Manager Email</label><input className="form-input" type="email" value={inviteEmail} onChange={e=>setInviteEmail(e.target.value)} placeholder="manager@fund.com"/></div>
+              <div className="form-group"><label className="form-label">Fund Name (optional)</label><input className="form-input" placeholder="e.g. Apex Capital III — helps personalise the invite"/></div>
+              <div className="form-group"><label className="form-label">Message (optional)</label><textarea className="form-textarea" placeholder="Add a personal note to the invitation email…"/></div>
+              <button className="btn btn-gold" onClick={sendInvite} disabled={!inviteEmail}>Send Invitation →</button></>
+            ):(
+              <div style={{padding:"20px",background:"var(--green-bg)",border:"1px solid rgba(21,98,58,0.15)",borderRadius:"var(--radius)",fontSize:11,color:"var(--green)",lineHeight:1.7}}>
+                ✅ Invitation sent to <strong>{inviteEmail}</strong><br/>A unique invitation code has been generated and will arrive in their inbox within a few minutes. The code expires in <strong>48 hours</strong>.
+                <div style={{marginTop:14}}><button className="btn btn-sm btn-outline" onClick={()=>{setInviteSent(false);setInviteEmail("");}}>Send Another →</button></div>
+              </div>
+            )}
+          </div></div></>
+        )}
+        {view==="audit"&&(
+          <><div className="main-header"><div className="page-title">Audit Trail</div><div className="page-sub">Immutable log of all platform actions</div></div>
+          <div className="main-body"><div className="table-wrap" style={{padding:"0 20px"}}>
+            {auditLog.map((a,i)=><div key={i} className="audit-item"><div className="audit-time">{a.time}</div><div className="audit-icon">{a.icon}</div><div className="audit-text">{a.text}</div></div>)}
+          </div></div></>
+        )}
+      </div>
+      {modal?.type==="approve_fund"&&(
+        <div className="modal-overlay" onClick={()=>setModal(null)}>
+          <div className="modal" onClick={e=>e.stopPropagation()}>
+            <div className="modal-title">Activate Fund Account</div>
+            <div className="modal-sub">You are about to activate <strong>{modal.fund.name}</strong> and set it to <strong>Live</strong> status. This will enable the fund manager to engage with investors via the portal. Confirm all checklist items have been completed and approved by the appropriate signatories.</div>
+            <div style={{padding:"12px 16px",background:"var(--green-bg)",border:"1px solid rgba(21,98,58,0.15)",borderRadius:"var(--radius)",fontSize:11,color:"var(--green)"}}>⚠️ This action is irreversible without admin intervention. Proceed only when fully satisfied.</div>
+            <div className="modal-actions"><button className="btn btn-outline" onClick={()=>setModal(null)}>Cancel</button><button className="btn btn-gold" onClick={()=>setModal(null)}>Confirm & Activate →</button></div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function FundManagerPortal({user,onLogout}){
+  const [view,setView]=useState("dashboard");
+  const investors=[
+    {name:"Alexandra Chen",entity:"Individual",committed:"€500,000",kyc:"Verified",onboarding:"Complete"},
+    {name:"Murphy Family Trust",entity:"Trust",committed:"€1,200,000",kyc:"Pending Review",onboarding:"In Progress"},
+    {name:"Vanguard Holdings Ltd",entity:"Corporate",committed:"€3,000,000",kyc:"Action Required",onboarding:"Docs Outstanding"},
+  ];
+  const crmEvents=[
+    {investor:"Brendan O'Sullivan",stage:"Committed",crm:"Salesforce",time:"04 May 09:14",action:"Welcome letter pending"},
+    {investor:"Irish Life Pension Fund",stage:"Committed",crm:"HubSpot",time:"03 May 16:30",action:"Letter sent — KYC initiated"},
+  ];
+  const workflow=[
+    {title:"Welcome letter pending dual approval — Brendan O'Sullivan",meta:"CRM trigger received 04 May · Awaiting manager + admin approval",type:"due-soon"},
+    {title:"KYC docs outstanding — Vanguard Holdings Ltd",meta:"Requested 28 Apr 2026 · 6 days overdue",type:"overdue"},
+    {title:"Investor onboarding complete — Irish Life Pension Fund",meta:"Completed 02 May 2026",type:"complete"},
+  ];
+  const navItems=[
+    {id:"dashboard",icon:"◈",label:"Dashboard"},{id:"investors",icon:"👥",label:"Investors"},
+    {id:"crm",icon:"🔗",label:"CRM Integration"},{id:"workflow",icon:"⚡",label:"Workflow"},
+    {id:"documents",icon:"📁",label:"Documents"},
+  ];
+  return(
+    <div className="app">
+      <div className="sidebar">
+        <div className="sidebar-brand"><div className="sidebar-brand-name">eoghar</div><div className="sidebar-brand-sub">Fund Manager</div></div>
+        <div className="sidebar-user"><div className="sidebar-user-name">{user.name}</div><div className="sidebar-user-role">Fund Manager</div><div className="sidebar-user-status status-live">● Live</div></div>
+        <div className="nav-section"><div className="nav-label">Navigation</div>
+          {navItems.map(n=><div key={n.id} className={`nav-item${view===n.id?" active":""}`} onClick={()=>setView(n.id)}><span className="nav-item-icon">{n.icon}</span>{n.label}</div>)}
+        </div>
+        <div className="sidebar-logout"><span className="logout-btn" onClick={onLogout}>Sign Out</span></div>
+      </div>
+      <div className="main">
+        {view==="dashboard"&&(
+          <><div className="main-header"><div className="page-title">Fund Manager Dashboard</div><div className="page-sub">Harrington Capital Partners III</div></div>
+          <div className="main-body">
+            <div className="stat-grid">{[["Active Investors","12","Fully onboarded"],["AUM","€250M","Base currency EUR"],["Pending Actions","3","Require attention"],["CRM Events","2","Since last login"]].map(([l,v,s])=><div key={l} className="stat-card"><div className="stat-label">{l}</div><div className="stat-value">{v}</div><div className="stat-sub">{s}</div></div>)}</div>
+            <div className="section-title">Recent Workflow</div>
+            {workflow.map((w,i)=><div key={i} className={`workflow-item ${w.type}`}><div className={`workflow-dot dot-${w.type==="overdue"?"red":w.type==="due-soon"?"gold":"green"}`}/><div className="workflow-info"><div className="workflow-title">{w.title}</div><div className="workflow-meta">{w.meta}</div></div></div>)}
+          </div></>
+        )}
+        {view==="investors"&&(
+          <><div className="main-header"><div className="page-title">Investors</div><div className="page-sub">AML/KYC status and onboarding progress</div></div>
+          <div className="main-body"><div className="table-wrap">
+            <div className="table-header" style={{gridTemplateColumns:"2fr 1fr 1fr 1fr 1fr"}}><span>Investor</span><span>Entity</span><span>Committed</span><span>KYC</span><span>Onboarding</span></div>
+            {investors.map((inv,i)=><div key={i} className="table-row" style={{gridTemplateColumns:"2fr 1fr 1fr 1fr 1fr"}}><span style={{fontWeight:500}}>{inv.name}</span><span style={{color:"var(--ink-muted)"}}>{inv.entity}</span><span>{inv.committed}</span><span><span className={`badge ${inv.kyc==="Verified"?"badge-green":inv.kyc==="Action Required"?"badge-red":"badge-gold"}`}>{inv.kyc}</span></span><span><span className={`badge ${inv.onboarding==="Complete"?"badge-green":inv.onboarding==="In Progress"?"badge-gold":"badge-red"}`}>{inv.onboarding}</span></span></div>)}
+          </div></div></>
+        )}
+        {view==="crm"&&(
+          <><div className="main-header"><div className="page-title">CRM Integration</div><div className="page-sub">System-agnostic MCP connection · Trigger: investor reaches Committed stage</div></div>
+          <div className="main-body">
+            <div className="crm-card"><div className="form-card-title">Connected CRM</div>
+              <div className="crm-connected"><div className="crm-connected-dot"/><div className="crm-connected-text">Salesforce connected via MCP · Last synced: 04 May 2026 at 09:14</div></div>
+              <div style={{fontSize:11,color:"var(--ink-muted)",lineHeight:1.7,marginBottom:16}}>Your CRM is connected and actively monitoring investor pipeline stages. When an investor reaches <strong>Committed</strong>, this portal is automatically notified and the onboarding workflow begins.</div>
+              <div style={{display:"flex",gap:10}}><button className="btn btn-sm btn-outline">Disconnect</button><button className="btn btn-sm btn-outline">Connect different CRM →</button></div>
+            </div>
+            <div className="crm-card"><div className="form-card-title">Workflow Triggers</div>
+              <div className="crm-trigger-item"><div className="crm-trigger-icon">🎯</div><div className="crm-trigger-label">Investor reaches <strong>Committed</strong> in CRM</div><span className="badge badge-green crm-trigger-status">Active</span></div>
+              <div className="crm-trigger-item"><div className="crm-trigger-icon">📨</div><div className="crm-trigger-label">Welcome letter drafted for manager review</div><span className="badge badge-green crm-trigger-status">Active</span></div>
+              <div className="crm-trigger-item"><div className="crm-trigger-icon">✅</div><div className="crm-trigger-label">Dual approval (manager + admin) before letter sends</div><span className="badge badge-green crm-trigger-status">Active</span></div>
+              <div className="crm-trigger-item"><div className="crm-trigger-icon">📋</div><div className="crm-trigger-label">AML/KYC workflow initiated post-letter</div><span className="badge badge-green crm-trigger-status">Active</span></div>
+              <div className="crm-trigger-item"><div className="crm-trigger-icon">👤</div><div className="crm-trigger-label">Investor portal access provisioned</div><span className="badge badge-green crm-trigger-status">Active</span></div>
+            </div>
+            <div className="crm-card"><div className="form-card-title">Recent CRM Events</div>
+              {crmEvents.map((e,i)=><div key={i} className="crm-trigger-item"><div className="crm-trigger-icon">🔔</div><div className="crm-trigger-label"><strong>{e.investor}</strong> → {e.stage} ({e.crm}) · {e.time}</div><span className={`badge ${e.action.includes("pending")?"badge-gold":"badge-green"}`} style={{fontSize:9,whiteSpace:"nowrap"}}>{e.action}</span></div>)}
+            </div>
+          </div></>
+        )}
+        {view==="workflow"&&(
+          <><div className="main-header"><div className="page-title">Workflow</div><div className="page-sub">Active tasks and due dates</div></div>
+          <div className="main-body">
+            {workflow.map((w,i)=><div key={i} className={`workflow-item ${w.type}`}><div className={`workflow-dot dot-${w.type==="overdue"?"red":w.type==="due-soon"?"gold":"green"}`}/><div className="workflow-info"><div className="workflow-title">{w.title}</div><div className="workflow-meta">{w.meta}</div></div></div>)}
+          </div></>
+        )}
+        {view==="documents"&&(
+          <><div className="main-header"><div className="page-title">Documents</div><div className="page-sub">All investor and fund materials</div></div>
+          <div className="main-body">
+            <div className="section-title">Investor KYC/AML Documents</div>
+            <div className="table-wrap">
+              <div className="table-header" style={{gridTemplateColumns:"2fr 1.5fr 1fr 1fr"}}><span>Document</span><span>Investor</span><span>Received</span><span>Status</span></div>
+              {[["Passport — Alexandra Chen","Alexandra Chen","30 Apr","Verified"],["Proof of Address — A. Chen","Alexandra Chen","30 Apr","Verified"],["Certificate of Incorporation — Vanguard","Vanguard Holdings Ltd","—","Outstanding"],["Beneficial Owner Declaration — Vanguard","Vanguard Holdings Ltd","—","Outstanding"]].map(([d,inv,dt,st],i)=>(
+                <div key={i} className="table-row" style={{gridTemplateColumns:"2fr 1.5fr 1fr 1fr"}}><span>{d}</span><span style={{color:"var(--ink-muted)"}}>{inv}</span><span>{dt}</span><span><span className={`badge ${st==="Verified"?"badge-green":st==="Outstanding"?"badge-red":"badge-gold"}`}>{st}</span></span></div>
+              ))}
+            </div>
+            <div className="section-title" style={{marginTop:24}}>Admin Documents</div>
+            <div className="table-wrap">
+              <div className="table-header" style={{gridTemplateColumns:"2fr 1fr 1fr"}}><span>Document</span><span>Issued</span><span>Status</span></div>
+              {[["Q1 2026 Fund Report","01 Apr 2026","Published"],["Annual Audited Accounts 2025","15 Mar 2026","Published"],["AIFMD Annex IV Report Q1","28 Mar 2026","Published"]].map(([d,dt,st],i)=>(
+                <div key={i} className="table-row" style={{gridTemplateColumns:"2fr 1fr 1fr"}}><span>{d}</span><span style={{color:"var(--ink-muted)"}}>{dt}</span><span><span className="badge badge-green">{st}</span></span></div>
+              ))}
+            </div>
+          </div></>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function InvestorPortal({user,onLogout}){
+  const [view,setView]=useState("dashboard");
+  const navItems=[
+    {id:"dashboard",icon:"◈",label:"Dashboard"},{id:"funds",icon:"📊",label:"My Funds"},
+    {id:"documents",icon:"📁",label:"Documents"},{id:"onboarding",icon:"✍️",label:"My Onboarding"},
+  ];
+  return(
+    <div className="app">
+      <div className="sidebar">
+        <div className="sidebar-brand"><div className="sidebar-brand-name">eoghar</div><div className="sidebar-brand-sub">Investor Portal</div></div>
+        <div className="sidebar-user"><div className="sidebar-user-name">{user.name}</div><div className="sidebar-user-role">Investor</div></div>
+        <div className="nav-section"><div className="nav-label">Navigation</div>
+          {navItems.map(n=><div key={n.id} className={`nav-item${view===n.id?" active":""}`} onClick={()=>setView(n.id)}><span className="nav-item-icon">{n.icon}</span>{n.label}</div>)}
+        </div>
+        <div className="sidebar-logout"><span className="logout-btn" onClick={onLogout}>Sign Out</span></div>
+      </div>
+      <div className="main">
+        <div className="main-header"><div className="page-title">{navItems.find(n=>n.id===view)?.label}</div><div className="page-sub">Welcome back, {user.name}</div></div>
+        <div className="main-body">
+          {view==="dashboard"&&<div className="stat-grid">{[["My Funds","1","Active investment"],["Total Committed","€500,000","EUR"],["Documents","4","In repository"],["Onboarding","Complete","All docs verified"]].map(([l,v,s])=><div key={l} className="stat-card"><div className="stat-label">{l}</div><div className="stat-value">{v}</div><div className="stat-sub">{s}</div></div>)}</div>}
+          {view==="funds"&&<div className="table-wrap"><div className="table-header" style={{gridTemplateColumns:"2fr 1fr 1fr 1fr"}}><span>Fund</span><span>Committed</span><span>Since</span><span>Status</span></div><div className="table-row" style={{gridTemplateColumns:"2fr 1fr 1fr 1fr"}}><span style={{fontWeight:500}}>Harrington Capital Partners III</span><span>€500,000</span><span>Jan 2026</span><span><span className="badge badge-green">Active</span></span></div></div>}
+          {view==="documents"&&<div className="table-wrap"><div className="table-header" style={{gridTemplateColumns:"2fr 1fr 1fr"}}><span>Document</span><span>From</span><span>Date</span></div>{[["Q1 2026 Fund Report","Harrington Capital III","01 Apr 2026"],["Annual Audited Accounts 2025","Harrington Capital III","15 Mar 2026"],["Welcome Letter","Harrington Capital III","15 Jan 2026"],["KYC Confirmation","eoghar Admin","20 Jan 2026"]].map(([d,f,dt],i)=><div key={i} className="table-row" style={{gridTemplateColumns:"2fr 1fr 1fr"}}><span>{d}</span><span style={{color:"var(--ink-muted)"}}>{f}</span><span>{dt}</span></div>)}</div>}
+          {view==="onboarding"&&<div style={{maxWidth:520}}>{[["Full Name","Alexandra Chen","✅"],["Entity Type","Individual","✅"],["Passport","Uploaded & Verified","✅"],["Proof of Address","Uploaded & Verified","✅"],["Source of Funds Declaration","Completed","✅"],["AML Screening","Passed","✅"]].map(([l,v,s],i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"13px 0",borderBottom:"1px solid var(--paper-mid)",fontSize:11,alignItems:"center"}}><span style={{color:"var(--ink-muted)"}}>{l}</span><span style={{color:"var(--ink)"}}>{v}</span><span className="badge badge-green">{s}</span></div>)}</div>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function App(){
+  const [screen,setScreen]=useState("landing");
+  const [selectedRole,setSelectedRole]=useState(null);
+  const [user,setUser]=useState(null);
+  const [inviteCode,setInviteCode]=useState(null);
+  const handleRole=(role)=>{setSelectedRole(role);setScreen("login");}
+  const handleLogin=(u)=>{
+    setUser(u);
+    if(u.role==="fund_manager"&&u.status==="pending") setScreen("pending");
+    else if(u.role==="admin") setScreen("admin");
+    else if(u.role==="fund_manager") setScreen("fund_manager");
+    else setScreen("investor");
+  };
+  const handleSetupAccess=()=>setScreen("invite_gate");
+  const handleValidCode=(code)=>{setInviteCode(code);setScreen("onboarding_form");}
+  const handleOnboardingSubmit=()=>setScreen("submitted");
+  const handleLogout=()=>{setUser(null);setSelectedRole(null);setInviteCode(null);setScreen("landing");}
+  if(screen==="landing") return <Landing onRole={handleRole}/>;
+  if(screen==="login") return <Login role={selectedRole} onLogin={handleLogin} onBack={()=>setScreen("landing")} onSetupAccess={handleSetupAccess}/>;
+  if(screen==="invite_gate") return <InviteGate onValidCode={handleValidCode} onBack={()=>setScreen("login")}/>;
+  if(screen==="onboarding_form") return <FundOnboardingForm inviteCode={inviteCode} onSubmit={handleOnboardingSubmit} onBack={()=>setScreen("login")}/>;
+  if(screen==="submitted") return(
+    <div className="pending-wrap"><div className="pending-box anim-1" style={{textAlign:"center"}}>
+      <div style={{fontSize:40,marginBottom:20}}>🎉</div>
+      <div className="pending-badge"><div className="pending-dot"/><span>Application Submitted</span></div>
+      <div className="pending-title">Application received</div>
+      <div className="pending-sub" style={{marginBottom:28}}>Thank you for completing the onboarding form. Your application has been sent to the admin team for review. You will receive a confirmation email shortly and will be notified when your account goes live.</div>
+      <button className="btn btn-outline btn-full" onClick={handleLogout}>← Return to Login</button>
+    </div></div>
+  );
+  if(screen==="pending") return <PendingScreen user={user} onLogout={handleLogout}/>;
+  if(screen==="admin") return <AdminPortal user={user} onLogout={handleLogout}/>;
+  if(screen==="fund_manager") return <FundManagerPortal user={user} onLogout={handleLogout}/>;
+  if(screen==="investor") return <InvestorPortal user={user} onLogout={handleLogout}/>;
+  return null;
+}
+
 ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
 </body>
