@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/bbq/:path*",
+      "destination": "https://the-pit-mits.vercel.app/:path*"
+    }
+  ]
+}
