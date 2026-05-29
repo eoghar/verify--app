@@ -2063,6 +2063,7 @@
         <div class="sidebar-item" onclick="adminNav('aml-nbac')"><span class="sidebar-item-icon">🏦</span> NBAC Pipeline <span class="sidebar-badge">3</span></div>
         <div class="sidebar-item" onclick="adminNav('aml-investors')"><span class="sidebar-item-icon">👥</span> All Investors</div>
         <div class="sidebar-section-label" style="margin-top:12px;">Tools</div>
+        <div class="sidebar-item" onclick="adminNav('aml-manager-view')"><span class="sidebar-item-icon">👁</span> Manager View</div>
         <div class="sidebar-item" onclick="adminNav('send-invite')"><span class="sidebar-item-icon">📨</span> Send Invitation</div>
         <div class="sidebar-item"><span class="sidebar-item-icon">📋</span> Audit Trail</div>
       </div>
@@ -3528,6 +3529,7 @@
     else if (section === 'aml-reviews') renderPeriodicReviews(content);
     else if (section === 'aml-investors') renderInvestorList(content);
     else if (section === 'aml-nbac') renderAMLNBACView(content);
+    else if (section === 'aml-manager-view') renderManagerView(content);
     else if (section === 'nbac-dashboard') renderNBACDashboard(content);
     else if (section === 'nbac-pipeline') renderNBACPipeline(content);
     else if (section === 'nbac-approvals') renderApprovals(content);
@@ -4463,6 +4465,262 @@
       <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted-lt);margin-bottom:10px;">Document Status</div>
       <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:24px;">
         ${docs.map(d => `
+          <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--ink-soft);border:1px solid ${d.status==='done'?'rgba(51,244,187,0.15)':'rgba(232,69,69,0.2)'};border-radius:8px;">
+            <span style="font-size:15px;color:${d.status==='done'?'var(--teal)':'var(--danger)'};">${d.status==='done'?'✓':'✗'}</span>
+            <span style="font-size:13px;color:var(--white);flex:1;">${d.name}</span>
+            <span style="font-size:11px;color:${d.status==='done'?'var(--teal)':'var(--danger)'};">${d.status==='done'?'Provided':'Outstanding'}</span>
+          </div>`).join('')}
+      </div>
+
+      ${inv.refresh_days ? `
+        <div style="background:var(--ink-soft);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
+          <span style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:${inv.refresh_days<=14?'var(--danger)':inv.refresh_days<=30?'var(--warn)':'var(--teal)'};">${inv.refresh_days}d</span>
+          <div style="font-size:13px;color:var(--muted-lt);">until periodic KYC review is due. The administrator will contact this investor in advance.</div>
+        </div>` : ''}
+    `;
+  }
+
+
+  // ══════════════════════════════════════════
+  // ADMIN — MANAGER VIEW MIRROR
+  // ══════════════════════════════════════════
+
+  const ADMIN_MANAGERS = [
+    { id: 'mgr1', name: 'Apex Capital Management', contact: 'Michael Chen', email: 'mchen@apexcapital.com', funds: ['f1','f2'] },
+    { id: 'mgr2', name: 'Meridian Partners', contact: 'Sarah Gallagher', email: 'sgallagher@meridianpartners.com', funds: ['meridian1'] },
+    { id: 'mgr3', name: 'Vega Capital', contact: 'Tom Brennan', email: 'tbrennan@vegacapital.com', funds: ['vega1'] }
+  ];
+
+  // Meridian and Vega fund data for the mirror
+  const ADMIN_MIRROR_FUNDS = {
+    meridian1: {
+      id:'meridian1', name:'Meridian RE Fund III', type:'Real Estate', domicile:'Luxembourg', vintage:2022,
+      investors: [
+        { id:'m1', name:'Thornfield Capital Partners', flag:'🇬🇧', jurisdiction:'UK', type:'Institutional', status:'exception', issue:'UBO documentation incomplete', docs_complete:4, docs_total:7, letter_pending:false, refresh_days:null,
+          aml_note:'Internal: UBO register shows complex ownership structure — awaiting legal opinion from Luxembourg counsel.',
+          docs:[{name:'Certificate of Incorporation',status:'done'},{name:'UBO Register',status:'missing'},{name:'Director IDs — 3 of 5',status:'missing'},{name:'Authorised Signatory Resolution',status:'done'},{name:'Regulatory Licence',status:'done'},{name:'AML Policy',status:'done'},{name:'Subscription Agreement',status:'done'}] },
+        { id:'m2', name:'Chen Wei', flag:'🇸🇬', jurisdiction:'Singapore', type:'Institutional', status:'complete', issue:'', docs_complete:6, docs_total:6, letter_pending:false, refresh_days:8,
+          aml_note:'All clear. Periodic review due — send request this week.',
+          docs:[{name:'Certificate of Incorporation',status:'done'},{name:'UBO Register',status:'done'},{name:'Director IDs',status:'done'},{name:'Authorised Signatory Resolution',status:'done'},{name:'Regulatory Licence',status:'done'},{name:'Subscription Agreement',status:'done'}] },
+      ]
+    },
+    vega1: {
+      id:'vega1', name:'Vega Venture Fund II', type:'Venture Capital', domicile:'Ireland', vintage:2024,
+      investors: [
+        { id:'v1', name:'Sofia Andersson', flag:'🇸🇪', jurisdiction:'Sweden', type:'Sophisticated', status:'in-review', issue:'PEP screening flag raised', docs_complete:4, docs_total:4, letter_pending:false, refresh_days:null,
+          aml_note:'Internal: PEP flag raised on screening — secondary review in progress. Do not communicate to manager until resolved.',
+          docs:[{name:'Passport',status:'done'},{name:'Proof of Address',status:'done'},{name:'Source of Wealth',status:'done'},{name:'Subscription Agreement',status:'done'}] },
+        { id:'v2', name:'Marie Dubois', flag:'🇫🇷', jurisdiction:'France', type:'Sophisticated', status:'complete', issue:'', docs_complete:4, docs_total:4, letter_pending:false, refresh_days:45,
+          aml_note:'All clear.',
+          docs:[{name:'Passport',status:'done'},{name:'Proof of Address',status:'done'},{name:'Source of Wealth',status:'done'},{name:'Subscription Agreement',status:'done'}] },
+      ]
+    }
+  };
+
+  let mvSelectedManager = null;
+  let mvSelectedFund = null;
+  let mvSelectedInvestor = null;
+
+  function getFundsForManager(mgr) {
+    const funds = [];
+    mgr.funds.forEach(fid => {
+      const f = FM_FUNDS.find(f=>f.id===fid) || ADMIN_MIRROR_FUNDS[fid];
+      if (f) funds.push(f);
+    });
+    return funds;
+  }
+
+  function renderManagerView(el) {
+    mvSelectedFund = null;
+    mvSelectedInvestor = null;
+    el.innerHTML = `
+      <div style="margin-bottom:28px;">
+        <div class="panel-eyebrow">Admin Tool</div>
+        <h2 class="panel-title" style="font-size:22px;">Manager View</h2>
+        <p style="font-size:14px;color:var(--muted-lt);font-weight:300;margin-bottom:24px;">See exactly what a fund manager sees in their investor relations portal. Select a manager to mirror their view.</p>
+
+        <div style="display:flex;align-items:center;gap:12px;background:var(--ink-soft);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:8px;">
+          <span style="font-size:20px;flex-shrink:0;">👁</span>
+          <div style="flex:1;">
+            <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Select Fund Manager</div>
+            <select id="mv-manager-select" class="field-select" style="margin:0;" onchange="mvSelectManager(this.value)">
+              <option value="">— Choose a fund manager —</option>
+              ${ADMIN_MANAGERS.map(m => `<option value="${m.id}">${m.name} — ${m.contact}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+
+        <div style="font-size:12px;color:var(--muted);padding:0 4px;">
+          This view is read-only and mirrors exactly what the manager sees. Internal AML/KYC notes are visible to admin only and shown separately.
+        </div>
+      </div>
+
+      <div id="mv-content"></div>
+    `;
+  }
+
+  function mvSelectManager(mgrId) {
+    if (!mgrId) { document.getElementById('mv-content').innerHTML = ''; return; }
+    mvSelectedManager = ADMIN_MANAGERS.find(m=>m.id===mgrId);
+    mvSelectedFund = null;
+    mvSelectedInvestor = null;
+    mvRenderFundList();
+  }
+
+  function mvRenderFundList() {
+    const funds = getFundsForManager(mvSelectedManager);
+    const exceptions = funds.flatMap(f=>f.investors).filter(i=>i.status==='exception');
+    const refreshSoon = funds.flatMap(f=>f.investors).filter(i=>i.refresh_days&&i.refresh_days<=30);
+
+    document.getElementById('mv-content').innerHTML = `
+      <!-- Admin context bar -->
+      <div style="background:rgba(51,244,187,0.06);border:1px solid rgba(51,244,187,0.2);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+        <span style="font-size:16px;">👁</span>
+        <div style="font-size:13px;color:var(--teal);">You are viewing <strong>${mvSelectedManager.name}</strong>'s portal as they see it. Contact: ${mvSelectedManager.contact} · ${mvSelectedManager.email}</div>
+      </div>
+
+      <!-- Manager view starts here — identical to what manager sees -->
+      <div style="margin-bottom:24px;">
+        <div class="panel-eyebrow">Investor Relations</div>
+        <h2 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.02em;color:var(--white);margin-bottom:4px;">Your Funds</h2>
+        <p style="font-size:14px;color:var(--muted-lt);font-weight:300;">Administered by Nexus · ${funds.length} active fund${funds.length!==1?'s':''}</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;">
+        <div style="background:var(--ink-soft);border:1px solid var(--border);border-radius:12px;padding:18px 20px;">
+          <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Total Investors</div>
+          <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--white);">${funds.reduce((a,f)=>a+f.investors.length,0)}</div>
+        </div>
+        <div style="background:var(--ink-soft);border:1px solid var(--border);border-radius:12px;padding:18px 20px;">
+          <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Exceptions</div>
+          <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:${exceptions.length>0?'var(--danger)':'var(--teal)'};">${exceptions.length}</div>
+        </div>
+        <div style="background:var(--ink-soft);border:1px solid var(--border);border-radius:12px;padding:18px 20px;">
+          <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Refresh Due ≤30d</div>
+          <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:${refreshSoon.length>0?'var(--warn)':'var(--teal)'};">${refreshSoon.length}</div>
+        </div>
+      </div>
+
+      ${funds.map(fund => {
+        const complete = fund.investors.filter(i=>i.status==='complete').length;
+        const exc = fund.investors.filter(i=>i.status==='exception').length;
+        const review = fund.investors.filter(i=>i.status==='in-review').length;
+        const pct = Math.round((complete/fund.investors.length)*100);
+        return `
+        <div onclick="mvDrillFund('${fund.id}')" style="background:var(--ink-soft);border:1px solid var(--border);border-radius:16px;padding:24px 28px;margin-bottom:14px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--teal)';this.style.transform='translateX(4px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='translateX(0)'">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px;">
+            <div>
+              <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--white);margin-bottom:3px;">${fund.name}</div>
+              <div style="font-size:13px;color:var(--muted-lt);">${fund.type} · ${fund.domicile} · Vintage ${fund.vintage}</div>
+            </div>
+            <div style="text-align:right;flex-shrink:0;">
+              <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:${pct===100?'var(--teal)':pct>60?'var(--white)':'var(--warn)'};">${pct}%</div>
+              <div style="font-size:11px;color:var(--muted);">onboarded</div>
+            </div>
+          </div>
+          <div style="background:var(--ink-mid);border-radius:4px;height:5px;margin-bottom:14px;overflow:hidden;">
+            <div style="height:100%;border-radius:4px;background:linear-gradient(90deg,var(--teal-mid),var(--teal));width:${pct}%;"></div>
+          </div>
+          <div style="display:flex;gap:16px;">
+            <span style="font-size:12px;color:var(--teal);">✓ ${complete} complete</span>
+            ${exc>0?`<span style="font-size:12px;color:var(--danger);">⚠ ${exc} exception${exc>1?'s':''}</span>`:''}
+            ${review>0?`<span style="font-size:12px;color:var(--warn);">⏳ ${review} in review</span>`:''}
+            <span style="font-size:12px;color:var(--muted);margin-left:auto;">View all ${fund.investors.length} investors →</span>
+          </div>
+        </div>`;
+      }).join('')}
+    `;
+  }
+
+  function mvDrillFund(fundId) {
+    const funds = getFundsForManager(mvSelectedManager);
+    mvSelectedFund = funds.find(f=>f.id===fundId);
+    if (!mvSelectedFund) return;
+
+    const sorted = [
+      ...mvSelectedFund.investors.filter(i=>i.status==='exception'),
+      ...mvSelectedFund.investors.filter(i=>i.status==='in-review'),
+      ...mvSelectedFund.investors.filter(i=>i.status==='complete')
+    ];
+
+    document.getElementById('mv-content').innerHTML = `
+      <!-- Admin context bar -->
+      <div style="background:rgba(51,244,187,0.06);border:1px solid rgba(51,244,187,0.2);border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:20px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:16px;">👁</span>
+          <div style="font-size:13px;color:var(--teal);">Mirroring <strong>${mvSelectedManager.name}</strong> · ${mvSelectedFund.name}</div>
+        </div>
+        <button onclick="mvRenderFundList()" style="background:none;border:none;color:var(--teal);font-family:'Syne',sans-serif;font-size:11px;font-weight:600;cursor:pointer;">← All Funds</button>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <div class="panel-eyebrow">${mvSelectedFund.type} · ${mvSelectedFund.domicile}</div>
+        <h2 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.02em;color:var(--white);">${mvSelectedFund.name}</h2>
+      </div>
+
+      <div class="workflow-table" style="margin-bottom:16px;">
+        <div class="wf-header" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr 100px;">
+          <div class="wf-col-head">Investor</div>
+          <div class="wf-col-head">Jurisdiction</div>
+          <div class="wf-col-head">Status</div>
+          <div class="wf-col-head">Documents</div>
+          <div class="wf-col-head">Refresh Due</div>
+          <div class="wf-col-head">Detail</div>
+        </div>
+        ${sorted.map(inv => `
+          <div class="wf-row" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr 100px;">
+            <div><div class="wf-name">${inv.flag} ${inv.name}</div><div class="wf-meta">${inv.type}</div></div>
+            <div class="wf-cell">${inv.jurisdiction}</div>
+            <div><span class="badge ${inv.status==='complete'?'badge-teal':inv.status==='exception'?'badge-danger':'badge-warn'}"><span class="badge-dot"></span>${inv.status==='complete'?'Complete':inv.status==='exception'?'Exception':'In Review'}</span></div>
+            <div class="wf-cell">${inv.docs_complete} / ${inv.docs_total}</div>
+            <div class="wf-cell" style="color:${inv.refresh_days===null?'var(--muted)':inv.refresh_days<=14?'var(--danger)':inv.refresh_days<=30?'var(--warn)':'var(--teal)'};">${inv.refresh_days===null?'—':inv.refresh_days+'d'}</div>
+            <button class="wf-action" onclick="mvDrillInvestor('${inv.id}')">View</button>
+          </div>`).join('')}
+      </div>
+    `;
+  }
+
+  function mvDrillInvestor(investorId) {
+    const funds = getFundsForManager(mvSelectedManager);
+    const inv = funds.flatMap(f=>f.investors).find(i=>i.id===investorId);
+    if (!inv) return;
+
+    const statusLabel = { complete:'Complete', exception:'Exception — Action Required', 'in-review':'In Review' };
+
+    document.getElementById('mv-content').innerHTML = `
+      <!-- Admin context bar with internal note -->
+      <div style="background:rgba(51,244,187,0.06);border:1px solid rgba(51,244,187,0.2);border-radius:10px;padding:12px 16px;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:${inv.aml_note?'10px':'0'};">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:16px;">👁</span>
+            <div style="font-size:13px;color:var(--teal);">Mirroring <strong>${mvSelectedManager.name}</strong> · ${inv.name}</div>
+          </div>
+          <button onclick="mvDrillFund('${mvSelectedFund.id}')" style="background:none;border:none;color:var(--teal);font-family:'Syne',sans-serif;font-size:11px;font-weight:600;cursor:pointer;">← ${mvSelectedFund.name}</button>
+        </div>
+        ${inv.aml_note ? `
+          <div style="background:rgba(10,15,13,0.5);border:1px solid rgba(51,244,187,0.15);border-radius:8px;padding:10px 14px;">
+            <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--teal);margin-bottom:4px;">🔒 Internal AML/KYC Note — Not visible to manager</div>
+            <div style="font-size:12px;color:var(--muted-lt);">${inv.aml_note}</div>
+          </div>` : ''}
+      </div>
+
+      <!-- Manager view — identical to what they see -->
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;">
+        <div>
+          <h2 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.02em;color:var(--white);margin-bottom:4px;">${inv.flag} ${inv.name}</h2>
+          <div style="font-size:13px;color:var(--muted-lt);">${inv.type} · ${inv.jurisdiction}</div>
+        </div>
+        <span class="badge ${inv.status==='complete'?'badge-teal':inv.status==='exception'?'badge-danger':'badge-warn'}" style="font-size:12px;padding:6px 14px;"><span class="badge-dot"></span>${statusLabel[inv.status]}</span>
+      </div>
+
+      ${inv.issue ? `
+        <div style="background:rgba(232,69,69,0.08);border:1px solid rgba(232,69,69,0.2);border-radius:10px;padding:14px 16px;font-size:13px;color:var(--danger);display:flex;gap:10px;margin-bottom:20px;">
+          <span>⚠️</span><div>${inv.issue} — the administrator is managing this. You will be notified when resolved.</div>
+        </div>` : ''}
+
+      <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted-lt);margin-bottom:10px;">Document Status</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:24px;">
+        ${inv.docs.map(d => `
           <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--ink-soft);border:1px solid ${d.status==='done'?'rgba(51,244,187,0.15)':'rgba(232,69,69,0.2)'};border-radius:8px;">
             <span style="font-size:15px;color:${d.status==='done'?'var(--teal)':'var(--danger)'};">${d.status==='done'?'✓':'✗'}</span>
             <span style="font-size:13px;color:var(--white);flex:1;">${d.name}</span>
